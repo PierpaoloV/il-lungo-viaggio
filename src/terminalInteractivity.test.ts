@@ -57,6 +57,32 @@ describe("Bivi che pesano (tag # peso: scelta)", () => {
   });
 });
 
+const ACTION_SOURCE = `
+Una scena che chiede di agire. # input: richiesto
++ [Agisci]
+    Hai agito.
+    -> END
+`;
+
+describe("Scene-azione (tag # input: richiesto)", () => {
+  it("aspetta non avanza: rimanda all'azione esplicita", () => {
+    const { root, form, input } = mount(ACTION_SOURCE);
+
+    submitCommand(form, input, "aspetta");
+
+    expect(root.textContent).toContain("non succede niente finche' non scegli di agire");
+    expect(root.textContent).not.toContain("Hai agito.");
+  });
+
+  it("l'azione esplicita (clic sulla scelta) fa avanzare", () => {
+    const { root } = mount(ACTION_SOURCE);
+
+    root.querySelector<HTMLButtonElement>(".terminal__choice")!.click();
+
+    expect(root.textContent).toContain("Hai agito.");
+  });
+});
+
 describe("Risposta di scena per azioni che non avanzano", () => {
   it("risponde in voce (narrazione) invece del vecchio messaggio di sistema", () => {
     const { root, form, input } = mount();

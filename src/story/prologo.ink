@@ -215,6 +215,10 @@ Tu conosci quel nome. Errol. Il tipo di nome che sulle bocche degli adulti diven
     ~ dialogo_errol_ricevuto = true
     Lasci che il nome resti sospeso, senza chiedere altro.
     -> p14
+* { seed_curiosita_vecchio == "alta" } [Chiedi com'era Errol da vicino]
+    ~ dialogo_errol_ricevuto = true
+    "Stanco," dice il vecchio. "Come chi ha vinto e non sa ancora cosa farne." # voce: vecchio
+    -> p14
 
 === p14 ===
 La mensa e' piena dell'odore delle cose semplici: zuppa, pane, legno bagnato lavato troppe volte. Per te e' il posto di tua madre. # scene: p14
@@ -322,7 +326,7 @@ Fuori, tua madre chiude la mensa. Ogni rumore arriva piccolo. Tu ripensi allo sc
 - else:
     Il vecchio e' gia' un'ombra tra le altre della giornata.
 }
-Poi il sonno prende tutto senza chiedere permesso.
+Poi il sonno prende tutto senza chiedere permesso. # input: richiesto
 
 * [Dormi]
     Chiudi gli occhi.
@@ -413,7 +417,7 @@ La creatura e' stanca. Le ginocchia cedono, il fianco resta scoperto quando soll
 
 === p29 ===
 La creatura cade. La lingua in cui impreca non assomiglia a niente che tu conosca, poi anche quella si spegne. # scene: p29
-La Spada resta nella sua mano sinistra per un istante di troppo. Devi piegarti per prenderla.
+La Spada resta nella sua mano sinistra per un istante di troppo. Devi piegarti per prenderla. # input: richiesto
 
 + [Prendi la Spada]
     ~ spada_lungo_viaggio_recuperata = true

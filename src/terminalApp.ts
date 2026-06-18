@@ -34,6 +34,10 @@ const DREAM_CLIMAX_EVENT = "spada_consegnata_errol";
 // riconosciuto, ma non ha ancora un effetto" che rompeva la finzione.
 const SCENE_NOOP_FALLBACK = "Non succede niente che cambi qualcosa, non adesso.";
 
+// Nudge quando il giocatore `aspetta` in una scena-azione (tag `# input: richiesto`)
+// dove la storia non avanza da sola: deve compiere lui l'azione (bottone/comando).
+const REQUIRED_ACTION_NUDGE = "Aspetti, ma non succede niente finche' non scegli di agire.";
+
 type TerminalElements = {
   root: HTMLElement;
   storage?: StorageLike;
@@ -70,6 +74,9 @@ export class TerminalApp {
   // Vero quando le scelte correnti sono un bivio "che pesa" (tag ink `# peso: scelta`),
   // da distinguere visivamente da un semplice "premi per continuare".
   private weightedChoices = false;
+  // Vero in una scena-azione (tag `# input: richiesto`): `aspetta` non sceglie da
+  // solo l'unica scelta, il giocatore deve compiere l'azione (es. prendi spada).
+  private inputRequired = false;
 
   constructor(story: InkStory, elements: TerminalElements) {
     this.story = story;
@@ -164,9 +171,14 @@ export class TerminalApp {
   private advanceStory(choiceIndex?: number): void {
     if (typeof choiceIndex === "number") {
       this.story.ChooseChoiceIndex(choiceIndex);
-    } else if (!this.story.canContinue && this.story.currentChoices.length === 1) {
+    } else if (
+      !this.story.canContinue &&
+      this.story.currentChoices.length === 1 &&
+      !this.inputRequired
+    ) {
       // Con una sola continuazione possibile `aspetta` la seleziona da sola; con
-      // piu' scelte (un bivio D9) deve essere il giocatore a decidere.
+      // piu' scelte (un bivio D9) deve essere il giocatore a decidere. Nelle
+      // scene-azione (`# input: richiesto`) nemmeno la scelta singola e' automatica.
       this.story.ChooseChoiceIndex(0);
     }
 
@@ -176,6 +188,7 @@ export class TerminalApp {
       this.applyMode(tags);
       this.applyScene(tags);
       this.applyChoiceWeight(tags);
+      this.applyInputRequired(tags);
       const combatStarted = this.applyCombat(tags);
 
       if (line.length > 0) {
@@ -321,6 +334,21 @@ export class TerminalApp {
     this.weightedChoices = findTagValue(tags, "peso") === "scelta";
   }
 
+  /** Una scena-azione (`# input: richiesto`) richiede un comando esplicito, non `aspetta`. */
+  private applyInputRequired(tags: string[]): void {
+    this.inputRequired = findTagValue(tags, "input") === "richiesto";
+  }
+
+  /** Vero quando il giocatore deve agire e `aspetta` non basta a procedere. */
+  private get awaitingRequiredAction(): boolean {
+    return (
+      this.inputRequired &&
+      !this.activeCombat &&
+      !this.story.canContinue &&
+      this.story.currentChoices.length === 1
+    );
+  }
+
   private applyCombat(tags: string[]): boolean {
     if (this.activeCombat) {
       return false;
@@ -401,6 +429,10 @@ export class TerminalApp {
 
     switch (command.verb) {
       case "aspetta":
+        if (this.awaitingRequiredAction) {
+          this.writeSceneResponse(this.sceneContext.waitNudge ?? REQUIRED_ACTION_NUDGE);
+          return;
+        }
         this.advanceStory();
         return;
       case "guarda":

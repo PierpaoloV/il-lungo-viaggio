@@ -49,6 +49,11 @@ export type SceneContext = ParserContext & {
    * generico; scritta a mano per restare nel registro della scena.
    */
   sceneResponse?: string;
+  /**
+   * Riga in voce quando il giocatore `aspetta` in una scena-azione (tag ink
+   * `# input: richiesto`): rimanda all'azione esplicita senza dire "non puoi".
+   */
+  waitNudge?: string;
 };
 
 const INVENTORY: InventoryItem[] = [
@@ -566,6 +571,7 @@ const SCENES: Record<string, SceneContext> = {
       mezzo_panino: PANINO_DESC,
       letto: "Sa di casa."
     },
+    waitNudge: "Il sonno non viene se lo aspetti e basta. Devi lasciarti andare.",
     verbResponses: [
       { verb: "parla", target: "mirea", text: "Mirea e' nell'altra stanza." }
     ],
@@ -699,6 +705,8 @@ const SCENES: Record<string, SceneContext> = {
       cadavere: "Troppo vicino, troppo reale, eppure il sogno lo sfoca.",
       tracce: "Finiscono qui."
     },
+    waitNudge:
+      "Aspetti, ma la Spada resta li' nel fango. Finche' non la prendi, niente cambia.",
     choiceCommands: [
       { commands: ["prendi spada", "raccogli spada"], choice: "Prendi la Spada" }
     ]

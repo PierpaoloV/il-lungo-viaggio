@@ -66,6 +66,46 @@ function walkToNight(story: InkStory, curiosita: boolean): string {
   return advance(story); // P21
 }
 
+/** Percorre P00 -> P13 e si ferma alle scelte sul racconto di Errol. */
+function walkToErrolChoices(story: InkStory, curiosita: boolean): string[] {
+  advance(story);
+  choose(story, "Resta sveglio");
+  advance(story);
+  choose(story, "Segui lo scoiattolo");
+  advance(story);
+  choose(story, "Segui le tracce");
+  advance(story);
+  choose(story, "Chiedi scusa");
+  advance(story);
+  choose(story, "Offri il panino");
+  advance(story);
+  choose(story, "Accompagnalo alla mensa");
+  advance(story);
+  choose(story, curiosita ? "Chiedi dove sta andando" : "Ascolta in silenzio");
+  advance(story);
+  choose(story, "Serve a combattere i mostri");
+  advance(story);
+  choose(story, "Lo uccido");
+  advance(story);
+  return story.currentChoices.map((choice) => choice.text);
+}
+
+describe("Scelta bonus gated dalla curiosita' (P13)", () => {
+  it("con curiosita' alta sblocca la domanda extra su Errol", () => {
+    const story = createPrologueStory();
+    const choices = walkToErrolChoices(story, true);
+
+    expect(choices).toContain("Chiedi com'era Errol da vicino");
+  });
+
+  it("senza curiosita' la domanda extra non compare", () => {
+    const story = createPrologueStory();
+    const choices = walkToErrolChoices(story, false);
+
+    expect(choices).not.toContain("Chiedi com'era Errol da vicino");
+  });
+});
+
 describe("Payoff di seed_curiosita_vecchio (P21)", () => {
   it("con curiosita' alta lascia una domanda aperta sul vecchio", () => {
     const story = createPrologueStory();
