@@ -4,6 +4,10 @@ Ernesto e' umano.
 
 Non nasce come reincarnazione del Viaggiatore e non e' speciale per diritto di sangue. Nasce come persona normale. Lesmidoom lo sceglie e pianta in lui il seme della reincarnazione.
 
+## Nome
+
+Il nome completo di Ernesto non lo sa nessuno. Per tutti, e per il giocatore, e' semplicemente Ernesto.
+
 ## A 10 anni
 
 Ernesto e' curioso, spensierato e impulsivo.

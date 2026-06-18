@@ -8,6 +8,8 @@ E' la cicatrice che Ernesto adulto si fara' nello scontro finale con Errol, caus
 
 Nel prologo appare solo come un piccolo segno inspiegabile.
 
+Il segno si trova sul braccio sinistro. La sua forma precisa resta volutamente vaga per ora: si definira' piu' avanti.
+
 Man mano che Ernesto si avvicina a quel momento, il segno cambia, cresce e si definisce, come se il futuro stesse affiorando sulla pelle.
 
 Il segno non dice solo "sei scelto". Dice:

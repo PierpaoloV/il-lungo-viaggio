@@ -21,6 +21,11 @@ EXCLUDED = {
     ROOT / "story" / "story-bible.md",
     ROOT / "README.md",
     ROOT / "old" / "README.md",
+    # Process / planning docs, not narrative canon: keep them out of the bible.
+    ROOT / "game-outline" / "project-plan.md",
+    ROOT / "game-outline" / "prd-prologo.md",
+    ROOT / "game-outline" / "agent-brief-prologo.md",
+    ROOT / "game-outline" / "blueprint-prologo.md",
 }
 
 PRIORITY = {

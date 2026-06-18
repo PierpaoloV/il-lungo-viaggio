@@ -289,6 +289,8 @@ E' la cicatrice che Ernesto adulto si fara' nello scontro finale con Errol, caus
 
 Nel prologo appare solo come un piccolo segno inspiegabile.
 
+Il segno si trova sul braccio sinistro. La sua forma precisa resta volutamente vaga per ora: si definira' piu' avanti.
+
 Man mano che Ernesto si avvicina a quel momento, il segno cambia, cresce e si definisce, come se il futuro stesse affiorando sulla pelle.
 
 Il segno non dice solo "sei scelto". Dice:
@@ -324,6 +326,10 @@ Per la storia ufficiale la spada e' l'arma leggendaria di Errol. Per la verita' 
 Ernesto e' umano.
 
 Non nasce come reincarnazione del Viaggiatore e non e' speciale per diritto di sangue. Nasce come persona normale. Lesmidoom lo sceglie e pianta in lui il seme della reincarnazione.
+
+### Nome
+
+Il nome completo di Ernesto non lo sa nessuno. Per tutti, e per il giocatore, e' semplicemente Ernesto.
 
 ### A 10 anni
 
@@ -472,7 +478,7 @@ Ernesto ed Eireen decidono insieme di partire verso Nylph.
 
 Errol e' una figura tragica.
 
-Nella versione ufficiale e' Errol il Liberatore, l'eroe umano che sconfisse i mostri e libero' il continente.
+Nella versione ufficiale e' Errol il Liberatore, l'eroe umano che sconfisse i mostri e libero' il continente. Nella versione ufficiale, il gesto che chiude la guerra e' la sconfitta del capo della fazione nemica, Grumlok, decapitato da Errol con la Spada del Lungo Viaggio.
 
 In realta', Errol e' speciale: crede di seguire Thusiel, ma e' una reincarnazione inconsapevole di Madhyael.
 
@@ -671,8 +677,8 @@ Ogni espansione dovrebbe aggiungere:
 
 ## Domande Aperte
 
-- Nome completo di Ernesto.
-- Aspetto preciso del segno sul braccio.
+- ~~Nome completo di Ernesto.~~ Risolto: nessuno lo conosce; per tutti e' solo Ernesto.
+- Aspetto preciso del segno sul braccio. Posizione risolta: braccio sinistro. Resta aperta la forma.
 - Dettagli sul primo indizio lasciato da Errol.
 - Chi dono' la Spada del Lungo Viaggio a Errol e perche'.
 - Quanto e quando rivelare la natura di Eireen.

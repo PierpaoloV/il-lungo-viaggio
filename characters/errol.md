@@ -2,7 +2,7 @@
 
 Errol e' una figura tragica.
 
-Nella versione ufficiale e' Errol il Liberatore, l'eroe umano che sconfisse i mostri e libero' il continente.
+Nella versione ufficiale e' Errol il Liberatore, l'eroe umano che sconfisse i mostri e libero' il continente. Nella versione ufficiale, il gesto che chiude la guerra e' la sconfitta del capo della fazione nemica, Grumlok, decapitato da Errol con la Spada del Lungo Viaggio.
 
 In realta', Errol e' speciale: crede di seguire Thusiel, ma e' una reincarnazione inconsapevole di Madhyael.
 
