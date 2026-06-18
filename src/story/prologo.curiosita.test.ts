@@ -1,0 +1,87 @@
+import { describe, expect, it } from "vitest";
+
+import { createPrologueStory } from "./createStory";
+import type { InkStory } from "./inkTypes";
+import { getFlag } from "../state/saveLoad";
+
+/**
+ * Payoff di `seed_curiosita_vecchio`: il seme, scritto lungo il Quotidiano ma
+ * prima mai riletto, ora colora il pensiero di Ernesto prima di dormire (P21).
+ * Si percorre il Quotidiano due volte: massimizzando la curiosita' e azzerandola.
+ */
+
+function advance(story: InkStory): string {
+  let text = "";
+  while (story.canContinue) {
+    text += `${story.Continue()}\n`;
+  }
+  return text;
+}
+
+function choose(story: InkStory, needle: string): void {
+  const choice = story.currentChoices.find((candidate) => candidate.text.includes(needle));
+
+  if (!choice) {
+    const available = story.currentChoices.map((candidate) => candidate.text).join(" | ");
+    throw new Error(`Scelta "${needle}" non trovata. Disponibili: ${available || "(nessuna)"}`);
+  }
+
+  story.ChooseChoiceIndex(choice.index);
+}
+
+/** Percorre P00 -> P21 e restituisce il testo della scena della notte (P21). */
+function walkToNight(story: InkStory, curiosita: boolean): string {
+  advance(story);
+  choose(story, "Resta sveglio");
+  advance(story);
+  choose(story, "Segui lo scoiattolo");
+  advance(story);
+  choose(story, "Segui le tracce");
+  advance(story);
+  choose(story, "Chiedi scusa");
+  advance(story);
+  choose(story, "Offri il panino");
+  advance(story);
+  choose(story, "Accompagnalo alla mensa");
+  advance(story);
+  choose(story, curiosita ? "Chiedi dove sta andando" : "Ascolta in silenzio");
+  advance(story);
+  choose(story, "Serve a combattere i mostri");
+  advance(story);
+  choose(story, "Lo uccido");
+  advance(story);
+  choose(story, "Chiedi della battaglia");
+  advance(story);
+  choose(story, curiosita ? "Resta vicino al vecchio" : "Aiuta come sempre");
+  advance(story);
+  choose(story, curiosita ? "Chiedigli di Nylph" : "Torna da Mirea");
+  advance(story);
+  choose(story, curiosita ? "Guarda Lesmidoom" : "Guarda tua madre");
+  advance(story);
+  choose(story, "Resta vicino");
+  advance(story);
+  choose(story, "anche tu");
+  advance(story);
+  choose(story, "Chiedi a Mirea");
+  return advance(story); // P21
+}
+
+describe("Payoff di seed_curiosita_vecchio (P21)", () => {
+  it("con curiosita' alta lascia una domanda aperta sul vecchio", () => {
+    const story = createPrologueStory();
+    const night = walkToNight(story, true);
+
+    expect(getFlag(story, "seed_curiosita_vecchio")).toBe("alta");
+    expect(night).toContain("Del vecchio ti resta una domanda che non hai fatto");
+    expect(night).not.toContain("e' gia' un'ombra tra le altre");
+  });
+
+  it("senza curiosita' il vecchio sfuma tra i ricordi del giorno", () => {
+    const story = createPrologueStory();
+    const night = walkToNight(story, false);
+
+    expect(getFlag(story, "seed_curiosita_vecchio")).toBe("bassa");
+    expect(night).toContain("e' gia' un'ombra tra le altre");
+    expect(night).not.toContain("Del vecchio ti resta una domanda");
+  });
+});

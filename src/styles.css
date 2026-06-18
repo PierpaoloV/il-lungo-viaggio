@@ -229,6 +229,24 @@ input {
   background: rgba(159, 101, 43, 0.48);
 }
 
+/*
+ * Bivio "che pesa" (tag ink `# peso: scelta`): un segnale tipografico muto — un
+ * rombo che precede l'etichetta e un bordo piu' caldo — per distinguerlo da un
+ * semplice "premi per continuare". Niente testo esplicito tipo "questa conta".
+ */
+.terminal__choice--weighted {
+  border-color: rgba(225, 176, 95, 0.85);
+}
+
+.terminal__choice--weighted::before {
+  content: "◆";
+  margin-right: 0.55ch;
+  color: var(--color-accent);
+  font-size: 0.66em;
+  vertical-align: 0.12em;
+  opacity: 0.85;
+}
+
 .terminal__form {
   display: grid;
   grid-template-columns: auto 1fr;

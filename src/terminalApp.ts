@@ -29,6 +29,11 @@ const DREAM_CLIMAX_IMAGE_SRC = new URL(
 
 const DREAM_CLIMAX_EVENT = "spada_consegnata_errol";
 
+// Risposta in voce quando un comando sensato non avanza la storia e la scena non
+// ne ha una su misura: meglio una riga di narrazione che il vecchio "Comando
+// riconosciuto, ma non ha ancora un effetto" che rompeva la finzione.
+const SCENE_NOOP_FALLBACK = "Non succede niente che cambi qualcosa, non adesso.";
+
 type TerminalElements = {
   root: HTMLElement;
   storage?: StorageLike;
@@ -62,6 +67,9 @@ export class TerminalApp {
   private readonly storage?: StorageLike;
   private sceneId: SceneId = "p00";
   private activeCombat?: CombatState;
+  // Vero quando le scelte correnti sono un bivio "che pesa" (tag ink `# peso: scelta`),
+  // da distinguere visivamente da un semplice "premi per continuare".
+  private weightedChoices = false;
 
   constructor(story: InkStory, elements: TerminalElements) {
     this.story = story;
@@ -167,6 +175,7 @@ export class TerminalApp {
       const tags = this.story.currentTags ?? [];
       this.applyMode(tags);
       this.applyScene(tags);
+      this.applyChoiceWeight(tags);
       const combatStarted = this.applyCombat(tags);
 
       if (line.length > 0) {
@@ -235,7 +244,9 @@ export class TerminalApp {
 
     for (const choice of this.story.currentChoices) {
       const button = document.createElement("button");
-      button.className = "terminal__choice";
+      button.className = this.weightedChoices
+        ? "terminal__choice terminal__choice--weighted"
+        : "terminal__choice";
       button.type = "button";
       button.textContent = choice.text;
       button.dataset.command = choice.text;
@@ -282,6 +293,11 @@ export class TerminalApp {
     }
   }
 
+  /** Riga di narrazione (serif, in voce) per azioni sensate che non avanzano. */
+  private writeSceneResponse(text: string): void {
+    this.writeStoryLine(text, []);
+  }
+
   private applyMode(tags: string[]): void {
     const mode = findTagValue(tags, "mode");
 
@@ -298,6 +314,11 @@ export class TerminalApp {
     if (scene) {
       this.sceneId = scene;
     }
+  }
+
+  /** Una scena segnala col tag `# peso: scelta` che le scelte seguenti contano. */
+  private applyChoiceWeight(tags: string[]): void {
+    this.weightedChoices = findTagValue(tags, "peso") === "scelta";
   }
 
   private applyCombat(tags: string[]): boolean {
@@ -400,10 +421,13 @@ export class TerminalApp {
         return;
       default: {
         const response = this.resolveVerbResponse(command);
-        this.writeLine(
-          "system",
-          response ?? "Comando riconosciuto, ma non ha ancora un effetto in questa scena."
-        );
+        if (response) {
+          this.writeLine("system", response);
+          return;
+        }
+        // Azione sensata che non avanza: rispondi in voce (serif), non con la
+        // voce di sistema grigia. Per-scena se la scena ha una sua risposta.
+        this.writeSceneResponse(this.sceneContext.sceneResponse ?? SCENE_NOOP_FALLBACK);
       }
     }
   }

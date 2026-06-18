@@ -93,7 +93,7 @@ Davanti a te c'e' un anziano in tunica marrone. Sembra stanco come chi ha cammin
 === p06 ===
 Il vecchio guarda il panno che spunta dalla tua tasca. Non lo chiede. Lo nota soltanto. # scene: p06
 Tu senti il peso del mezzo panino come se fosse diventato piu' grande.
-Hai fame, ma lui sembra averne di piu'.
+Hai fame, ma lui sembra averne di piu'. # peso: scelta
 
 * [Offri il panino]
     ~ panino_dato = true
@@ -107,7 +107,7 @@ Hai fame, ma lui sembra averne di piu'.
 === p07 ===
 Il vecchio si pulisce le dita sulla tunica e guarda tra gli alberi. # scene: p07
 "Vieni dalla citta' vicina, vero? Mi hanno detto che a Mezclar c'e' una mensa per i viandanti. Da solo potrei perdermi. Mi accompagneresti?" # voce: vecchio
-Il sentiero verso casa sembra facile quando lo conosci. Per lui no.
+Il sentiero verso casa sembra facile quando lo conosci. Per lui no. # peso: scelta
 
 * [Accompagnalo alla mensa]
     ~ vecchio_accompagnato = true
@@ -316,7 +316,13 @@ La tua stanza e' la tua stanza: la coperta piegata male, la spada di legno vicin
 - else:
     Sul tavolo c'e' ancora il panno con il mezzo panino.
 }
-Fuori, tua madre chiude la mensa. Ogni rumore arriva piccolo. Tu ripensi allo scoiattolo, al vecchio, a Errol. Poi il sonno prende tutto senza chiedere permesso.
+Fuori, tua madre chiude la mensa. Ogni rumore arriva piccolo. Tu ripensi allo scoiattolo, al vecchio, a Errol.
+{ seed_curiosita_vecchio == "alta":
+    Del vecchio ti resta una domanda che non hai fatto. Domani, forse.
+- else:
+    Il vecchio e' gia' un'ombra tra le altre della giornata.
+}
+Poi il sonno prende tutto senza chiedere permesso.
 
 * [Dormi]
     Chiudi gli occhi.
@@ -332,7 +338,7 @@ Fumo. Ferro. Sangue. Una pianura spezzata dal rumore.
 
 === p23 ===
 Sei in piedi, ma il corpo non e' il tuo. Troppo alto, troppo pesante. Le mani hanno calli che non riconosci, il braccio fa male dove non dovrebbe. L'armatura e' di metallo pregiato, sporca di sangue, con uno stemma sul petto. # scene: p23
-A est, un fabbro affila lame circondato da soldati. A nord, la battaglia divora il cielo.
+A est, un fabbro affila lame circondato da soldati. A nord, la battaglia divora il cielo. # peso: scelta
 
 + [Parla col fabbro e i soldati]
     ~ sogno_bivio = "coordinato"

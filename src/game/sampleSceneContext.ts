@@ -43,6 +43,12 @@ export type SceneContext = ParserContext & {
   examineEffects?: Record<string, FlagEffect>;
   verbResponses?: VerbResponse[];
   choiceCommands?: ChoiceCommand[];
+  /**
+   * Risposta in voce (serif) per un'azione sensata che NON avanza la storia e
+   * non ha un `verbResponse` su misura. Sostituisce il messaggio di sistema
+   * generico; scritta a mano per restare nel registro della scena.
+   */
+  sceneResponse?: string;
 };
 
 const INVENTORY: InventoryItem[] = [
@@ -251,6 +257,8 @@ const SCENES: Record<string, SceneContext> = {
     examineEffects: {
       tracce: { name: "bosco_tracce_osservate", value: true }
     },
+    sceneResponse:
+      "Lo scoiattolo e' gia' piu' veloce di te, e gli alberi troppo lisci per le tue mani. Resti con la spada di legno e la pista davanti.",
     verbResponses: [
       {
         verb: "vai",
@@ -467,7 +475,9 @@ const SCENES: Record<string, SceneContext> = {
       mirea: "Ti guarda lavorare, poi guarda il vecchio.",
       ciotola: "Quasi vuota in fretta.",
       pane: "Pane semplice, di quello che non manca mai sui tavoli di Mezclar."
-    }
+    },
+    sceneResponse:
+      "Tua madre ha le mani piene, e tu hai imparato da un pezzo quando non e' il momento. Le passi accanto, porti il pane dove va portato."
   },
   p16: {
     sceneId: "p16",
@@ -788,6 +798,8 @@ const SCENES: Record<string, SceneContext> = {
       braccio: "La pelle e' tua, il segno no.",
       manica: "Puo' coprirlo in fretta."
     },
+    sceneResponse:
+      "Non c'e' niente da pulire, niente da fasciare. Il segno sta sotto la pelle, e tu non sai cosa si fa con una cosa cosi'.",
     choiceCommands: [
       { commands: ["esamina segno", "guarda segno", "tocca segno"], choice: "Guardalo meglio" },
       { commands: ["copri braccio", "copri segno", "copri manica"], choice: "Copri il braccio" }
