@@ -1,5 +1,6 @@
 import "./styles.css";
 
+import { hasSavedGame } from "./state/saveLoad";
 import { createPrologueStory } from "./story/createStory";
 import { TerminalApp } from "./terminalApp";
 
@@ -11,16 +12,30 @@ if (!root) {
   throw new Error("Missing #app root element.");
 }
 
-showTitleScreen(root, () => {
-  const app = new TerminalApp(createPrologueStory(), { root });
-  app.start();
+showTitleScreen(root, {
+  onNewGame: () => {
+    const app = new TerminalApp(createPrologueStory(), { root });
+    app.start();
+  },
+  onResume: () => {
+    const app = new TerminalApp(createPrologueStory(), { root });
+    app.startResumed();
+  }
 });
 
+type TitleScreenActions = {
+  onNewGame: () => void;
+  onResume: () => void;
+};
+
 /**
- * Schermata d'apertura: sfondo dipinto, titolo e un solo pulsante per partire.
- * Quando il giocatore avvia, l'overlay si dissolve e cede il `root` al gioco.
+ * Schermata d'apertura: sfondo dipinto, titolo e i pulsanti per partire. "Nuova
+ * partita" e' sempre presente; "Riprendi" compare solo se esiste un salvataggio
+ * nel browser. Avviata una scelta, l'overlay si dissolve e cede il `root` al gioco.
  */
-function showTitleScreen(host: HTMLElement, onStart: () => void): void {
+function showTitleScreen(host: HTMLElement, actions: TitleScreenActions): void {
+  const canResume = hasSavedGame();
+
   host.className = "title-screen";
   host.style.setProperty("--title-bg", `url("${titleBackground}")`);
   host.innerHTML = `
@@ -28,20 +43,34 @@ function showTitleScreen(host: HTMLElement, onStart: () => void): void {
       <div class="title-screen__content">
         <p class="title-screen__kicker">Un racconto interattivo</p>
         <h1 class="title-screen__title">Il Lungo Viaggio</h1>
-        <button type="button" class="title-screen__start" data-testid="start-button">
-          Inizia il viaggio
-        </button>
+        <div class="title-screen__actions">
+          ${
+            canResume
+              ? `<button type="button" class="title-screen__start" data-testid="resume-button">Riprendi</button>`
+              : ""
+          }
+          <button
+            type="button"
+            class="title-screen__start ${canResume ? "title-screen__start--secondary" : ""}"
+            data-testid="new-game-button"
+          >Nuova partita</button>
+        </div>
       </div>
     </div>
   `;
 
-  const startButton = host.querySelector<HTMLButtonElement>("[data-testid='start-button']")!;
-
-  startButton.addEventListener("click", () => {
+  const dismiss = (run: () => void): void => {
     host.removeAttribute("style");
     host.innerHTML = "";
-    onStart();
-  });
+    run();
+  };
 
-  startButton.focus();
+  host
+    .querySelector<HTMLButtonElement>("[data-testid='new-game-button']")!
+    .addEventListener("click", () => dismiss(actions.onNewGame));
+
+  const resumeButton = host.querySelector<HTMLButtonElement>("[data-testid='resume-button']");
+  resumeButton?.addEventListener("click", () => dismiss(actions.onResume));
+
+  (resumeButton ?? host.querySelector<HTMLButtonElement>("[data-testid='new-game-button']")!).focus();
 }

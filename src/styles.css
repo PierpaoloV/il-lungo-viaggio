@@ -375,8 +375,15 @@ input {
   text-shadow: 0 0.15rem 1.5rem rgba(0, 0, 0, 0.7);
 }
 
-.title-screen__start {
+.title-screen__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
   margin-top: 0.75rem;
+}
+
+.title-screen__start {
   min-height: 3rem;
   border: 1px solid rgba(247, 219, 163, 0.6);
   border-radius: 8px;
@@ -398,6 +405,19 @@ input {
   outline: none;
   background: #f3cf8d;
   transform: translateY(-1px);
+}
+
+/* Quando convive con "Riprendi", "Nuova partita" prende un look piu' discreto. */
+.title-screen__start--secondary {
+  color: #f7eccf;
+  background: rgba(20, 16, 9, 0.55);
+  border-color: rgba(247, 219, 163, 0.55);
+}
+
+.title-screen__start--secondary:hover,
+.title-screen__start--secondary:focus-visible {
+  background: rgba(35, 27, 14, 0.72);
+  border-color: #fbe9c6;
 }
 
 @media (prefers-reduced-motion: reduce) {

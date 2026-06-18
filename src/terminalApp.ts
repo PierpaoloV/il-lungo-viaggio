@@ -124,6 +124,12 @@ export class TerminalApp {
     this.input.focus();
   }
 
+  /** Variante di `start()` per la title screen: riprende il salvataggio esistente. */
+  startResumed(): void {
+    this.resume();
+    this.input.focus();
+  }
+
   private handleCommand(rawCommand: string): void {
     const command = rawCommand.trim();
 
