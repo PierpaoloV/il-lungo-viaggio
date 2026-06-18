@@ -321,6 +321,91 @@ input {
   }
 }
 
+/*
+ * Schermata d'apertura: l'immagine dipinta riempie la viewport, una velatura
+ * scura in basso tiene leggibili titolo e pulsante. Vive nel #app prima che il
+ * gioco prenda il suo posto.
+ */
+.title-screen {
+  display: grid;
+  min-height: 100vh;
+  background-image: var(--title-bg);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.title-screen__scrim {
+  display: grid;
+  align-items: end;
+  justify-items: center;
+  min-height: 100vh;
+  padding: clamp(2rem, 8vh, 6rem) 1.5rem;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 12, 6, 0) 38%,
+    rgba(15, 12, 6, 0.55) 72%,
+    rgba(11, 9, 5, 0.86) 100%
+  );
+}
+
+.title-screen__content {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.title-screen__kicker {
+  margin: 0;
+  color: rgba(245, 233, 205, 0.82);
+  font-family: var(--font-system);
+  font-size: 0.82rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+}
+
+.title-screen__title {
+  margin: 0;
+  color: #f7eccf;
+  font-family: var(--font-story);
+  font-size: clamp(2.4rem, 7vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  text-shadow: 0 0.15rem 1.5rem rgba(0, 0, 0, 0.7);
+}
+
+.title-screen__start {
+  margin-top: 0.75rem;
+  min-height: 3rem;
+  border: 1px solid rgba(247, 219, 163, 0.6);
+  border-radius: 8px;
+  padding: 0.75rem 2rem;
+  color: #1a1206;
+  font-family: var(--font-system);
+  font-size: 1.02rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  background: rgba(231, 184, 102, 0.92);
+  box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+
+.title-screen__start:hover,
+.title-screen__start:focus-visible {
+  border-color: #fbe9c6;
+  outline: none;
+  background: #f3cf8d;
+  transform: translateY(-1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title-screen__start {
+    transition: none;
+  }
+}
+
 /* Schermata finale del prologo (P36): banner quieto al posto delle scelte. */
 .terminal__end {
   width: 100%;
