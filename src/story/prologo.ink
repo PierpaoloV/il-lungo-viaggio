@@ -7,6 +7,7 @@ VAR rimorso_tornato = false
 VAR seed_curiosita_vecchio = "bassa"
 VAR seed_mostro_affamato = ""
 VAR dialogo_errol_ricevuto = false
+VAR vecchio_ha_nominato_spada = false
 VAR lesmidoom_rivelato = false
 VAR fai_buon_viaggio_sentito = false
 VAR orco_allarme = false

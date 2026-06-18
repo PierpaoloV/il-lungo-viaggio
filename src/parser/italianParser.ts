@@ -248,6 +248,38 @@ export function parseItalianCommand(input: string, context: ParserContext): Pars
     return command({ verb: "vai", targetText: targetText(dropFillers(rest)) });
   }
 
+  if (parsedVerb === "parla") {
+    const targetWords = dropFillers(rest);
+
+    if (targetWords.length === 0) {
+      return { status: "unknown", message: missingTargetMessage("parla") };
+    }
+
+    // Se il bersaglio e' una persona/oggetto della scena, risolvilo (es. `parla
+    // vecchio`). Altrimenti resta un *argomento* di conversazione (`chiedi di
+    // Nylph`), che il gioco gestisce come topic knowledge-gated.
+    const resolution = resolveObject(targetWords, context);
+
+    if (resolution.status === "match") {
+      return command({
+        verb: "parla",
+        targetId: resolution.object.id,
+        targetText: targetText(resolution.targetWords)
+      });
+    }
+
+    if (resolution.status === "ambiguous") {
+      return {
+        status: "ambiguity",
+        verb: "parla",
+        matches: resolution.matches,
+        message: `Quale? ${formatOptions(resolution.matches)}.`
+      };
+    }
+
+    return command({ verb: "parla", targetText: targetText(targetWords) });
+  }
+
   if (parsedVerb === "attacca") {
     const targetWords = dropFillers(rest);
 

@@ -35,6 +35,19 @@ export type ChoiceCommand = {
   choice: string;
 };
 
+/**
+ * Argomento di conversazione (`chiedi di <x>`), sul modello Roadwarden. Puo'
+ * essere knowledge-gated: disponibile solo quando `requiresFlag` e' soddisfatto;
+ * finche' no, risponde con `lockedText`. Chiedere puo' a sua volta `setsFlag`.
+ */
+export type Topic = {
+  aliases: string[];
+  text: string;
+  requiresFlag?: FlagEffect;
+  lockedText?: string;
+  setsFlag?: FlagEffect;
+};
+
 export type SceneContext = ParserContext & {
   sceneId: SceneId;
   look: string;
@@ -43,6 +56,7 @@ export type SceneContext = ParserContext & {
   examineEffects?: Record<string, FlagEffect>;
   verbResponses?: VerbResponse[];
   choiceCommands?: ChoiceCommand[];
+  topics?: Topic[];
   /**
    * Risposta in voce (serif) per un'azione sensata che NON avanza la storia e
    * non ha un `verbResponse` su misura. Sostituisce il messaggio di sistema
@@ -441,6 +455,25 @@ const SCENES: Record<string, SceneContext> = {
       {
         commands: ["parla vecchio", "parla errol"],
         choice: "Chiedi della battaglia"
+      }
+    ],
+    topics: [
+      {
+        aliases: ["nylph"],
+        text: "\"Lontana,\" dice il vecchio. \"Tanto da far dimenticare il tuo nome a chi ci arriva.\"",
+        setsFlag: { name: "seed_curiosita_vecchio", value: "alta" }
+      },
+      {
+        aliases: ["guerra"],
+        text: "\"Le guerre le raccontano i vincitori,\" dice. \"In questa, raccontano di una lama: la Spada del Lungo Viaggio.\"",
+        setsFlag: { name: "vecchio_ha_nominato_spada", value: true }
+      },
+      {
+        aliases: ["spada lungo viaggio", "spada errol"],
+        requiresFlag: { name: "vecchio_ha_nominato_spada", value: true },
+        lockedText:
+          "Il vecchio non l'ha ancora nominata. Non sapresti nemmeno cosa chiedergli.",
+        text: "\"Era di Errol,\" dice il vecchio. \"Dicono pesasse piu' del braccio che la reggeva.\""
       }
     ]
   },

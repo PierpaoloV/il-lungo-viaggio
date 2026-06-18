@@ -444,7 +444,12 @@ export class TerminalApp {
       case "aiuto":
         this.writeLine(
           "system",
-          formatHelp(this.sceneContext, this.story.currentChoices, this.activeCombatView)
+          formatHelp(
+            this.sceneContext,
+            this.story.currentChoices,
+            this.activeCombatView,
+            this.availableTopicLabels
+          )
         );
         return;
       case "esamina":
@@ -452,6 +457,10 @@ export class TerminalApp {
         this.applyExamineEffect(command);
         return;
       default: {
+        // `chiedi di <argomento>`: dialogo knowledge-gated (alla Roadwarden).
+        if (command.verb === "parla" && this.tryTopic(command)) {
+          return;
+        }
         const response = this.resolveVerbResponse(command);
         if (response) {
           this.writeLine("system", response);
@@ -504,6 +513,68 @@ export class TerminalApp {
     if (effect) {
       setFlag(this.story, effect.name, effect.value);
     }
+  }
+
+  /**
+   * Dialogo per argomento (`chiedi di <x>`): se la scena ha un topic che combacia,
+   * risponde. Se il topic e' knowledge-gated e il flag non e' soddisfatto, dà il
+   * `lockedText` (non sai ancora cosa chiedere); altrimenti il testo, ed eventualmente
+   * imposta un flag. Restituisce `true` se ha gestito il comando.
+   */
+  private tryTopic(command: ParsedCommand): boolean {
+    if (!command.targetText) {
+      return false;
+    }
+
+    const topics = this.sceneContext.topics;
+
+    if (!topics) {
+      return false;
+    }
+
+    const target = normalizeItalianText(command.targetText);
+    const topic = topics.find((candidate) =>
+      candidate.aliases.some((alias) => normalizeItalianText(alias) === target)
+    );
+
+    if (!topic) {
+      return false;
+    }
+
+    if (
+      topic.requiresFlag &&
+      getFlag(this.story, topic.requiresFlag.name) !== topic.requiresFlag.value
+    ) {
+      this.writeSceneResponse(
+        topic.lockedText ?? "Non sapresti cosa chiedergli su questo. Non ancora."
+      );
+      return true;
+    }
+
+    this.writeSceneResponse(topic.text);
+
+    if (topic.setsFlag) {
+      setFlag(this.story, topic.setsFlag.name, topic.setsFlag.value);
+    }
+
+    return true;
+  }
+
+  /** Argomenti che il giocatore puo' chiedere *ora* (gating soddisfatto), per `aiuto`. */
+  private get availableTopicLabels(): string[] {
+    const topics = this.sceneContext.topics;
+
+    if (!topics) {
+      return [];
+    }
+
+    return topics
+      .filter(
+        (topic) =>
+          !topic.requiresFlag ||
+          getFlag(this.story, topic.requiresFlag.name) === topic.requiresFlag.value
+      )
+      .map((topic) => topic.aliases[0]);
   }
 
   /** Testo per i verbi che non fanno avanzare la storia (es. `vai nord`, `parla vecchio`). */
@@ -798,7 +869,12 @@ function rangesOverlap(leftStart: number, leftEnd: number, rightStart: number, r
   return leftStart < rightEnd && rightStart < leftEnd;
 }
 
-function formatHelp(context: SceneContext, choices: InkChoice[], combat?: CombatView): string {
+function formatHelp(
+  context: SceneContext,
+  choices: InkChoice[],
+  combat?: CombatView,
+  topicLabels: string[] = []
+): string {
   if (combat) {
     const openings = combat.openings.map((opening) => opening.label).join(", ");
     return `Azioni disponibili: esamina nemico, attacca <apertura>, inventario, guarda. Aperture: ${openings}.`;
@@ -807,12 +883,13 @@ function formatHelp(context: SceneContext, choices: InkChoice[], combat?: Combat
   const objects = context.objects.map((object) => object.label).join(", ");
   const baseActions = "aspetta, inventario, guarda, esamina <oggetto>";
   const choiceText = choices.map((choice) => choice.text).join(", ");
+  const topicsPart = topicLabels.length > 0 ? ` Puoi chiedere di: ${topicLabels.join(", ")}.` : "";
 
   if (choiceText.length === 0) {
-    return `Azioni disponibili: ${baseActions}. Oggetti: ${objects}.`;
+    return `Azioni disponibili: ${baseActions}. Oggetti: ${objects}.${topicsPart}`;
   }
 
-  return `Azioni disponibili: ${baseActions}. Scelte disponibili: ${choiceText}. Oggetti: ${objects}.`;
+  return `Azioni disponibili: ${baseActions}. Scelte disponibili: ${choiceText}. Oggetti: ${objects}.${topicsPart}`;
 }
 
 function describeTarget(command: ParsedCommand, context: SceneContext): string {
