@@ -29,3 +29,4 @@ Formato: 16:9.
 - Coerenza chiave: il **volto dell'Ernesto adulto non si vede mai** (protegge il mistero del viaggio nel tempo).
 - Quando generi questa scena, incolla l'ancora di `art/characters/errol.md` nel prompt per fissare l'aspetto di Errol.
 - Da generare nella fase "scene", dopo aver fissato mondo e personaggio Errol.
+- **Immagine finale: `sogno-consegna-spada-v1.png`** (tenuta così). Volto dell'adulto non visibile ✓, registro sogno ✓. Lieve rischio di lettura «duello»: per un'eventuale v2 rendere più chiaro il lancio/afferraggio della spada.

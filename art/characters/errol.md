@@ -48,3 +48,4 @@ Formato: 3:4.
 - Deve funzionare prima come volto mitico del prologo; la lettura tragica deve restare in sottotesto fino alle espansioni o alla rivelazione.
 - La palette personale di Errol e' fredda e ferrosa, ma il registro cromatico finale lo decide la scena. Questo prompt usa il registro SOGNO perche' in v1 Errol appare nel sogno.
 - Nelle scene del sogno Errol puo' essere piu' sanguinante e provato, ma deve restare riconoscibile da occhi grigio-ferro, capelli biondo cenere spenti, cicatrice sullo zigomo destro e armatura fredda consumata.
+- **Variante canonica generata: `errol-portrait-v2.png`** (tono eroico-mitico, biondo cenere chiaro). `errol-portrait-v1.png` tenuta come alternativa per la futura rivelazione tragica. Nota: in v2 la cicatrice sullo zigomo destro e' poco marcata; mantenerla nelle generazioni future per coerenza.
