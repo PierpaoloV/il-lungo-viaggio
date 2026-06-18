@@ -114,7 +114,7 @@ describe("Quotidiano A — story-walk dei 4 rami D9", () => {
     expect(getFlag(story, "vecchio_accompagnato")).toBe(true);
     expect(getFlag(story, "aiuto_vecchio")).toBe("A_panino_accompagna");
     expect(getFlag(story, "rimorso_tornato")).toBe(false);
-    expect(seen).toContain("mensa");
+    expect(seen).toContain("p10");
   });
 
   it("Ramo B: panino dato + non accompagnato -> rimorso, ritrovato alla mensa", () => {
@@ -126,7 +126,7 @@ describe("Quotidiano A — story-walk dei 4 rami D9", () => {
     expect(getFlag(story, "aiuto_vecchio")).toBe("B_panino_non_accompagna");
     expect(getFlag(story, "rimorso_tornato")).toBe(true);
     expect(seen).toContain("p08");
-    expect(seen).toContain("mensa");
+    expect(seen).toContain("p10");
   });
 
   it("Ramo C: niente panino + accompagnato", () => {
@@ -137,7 +137,7 @@ describe("Quotidiano A — story-walk dei 4 rami D9", () => {
     expect(getFlag(story, "vecchio_accompagnato")).toBe(true);
     expect(getFlag(story, "aiuto_vecchio")).toBe("C_no_panino_accompagna");
     expect(getFlag(story, "rimorso_tornato")).toBe(false);
-    expect(seen).toContain("mensa");
+    expect(seen).toContain("p10");
   });
 
   it("Ramo D: niente panino + indica la strada", () => {
@@ -149,7 +149,7 @@ describe("Quotidiano A — story-walk dei 4 rami D9", () => {
     expect(getFlag(story, "aiuto_vecchio")).toBe("D_no_panino_indica");
     expect(getFlag(story, "rimorso_tornato")).toBe(false);
     expect(seen).not.toContain("p08");
-    expect(seen).toContain("mensa");
+    expect(seen).toContain("p10");
   });
 
   it("bosco_tracce_osservate resta false se non si esaminano le tracce", () => {

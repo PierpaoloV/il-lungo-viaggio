@@ -22,6 +22,13 @@ import {
 import type { InkChoice, InkStory } from "./story/inkTypes";
 import { getFlag, loadGame, saveGame, setFlag, type StorageLike } from "./state/saveLoad";
 
+const DREAM_CLIMAX_IMAGE_SRC = new URL(
+  "../art/scenes/sogno-consegna-spada-v1.png",
+  import.meta.url
+).href;
+
+const DREAM_CLIMAX_EVENT = "spada_consegnata_errol";
+
 type TerminalElements = {
   root: HTMLElement;
   storage?: StorageLike;
@@ -158,6 +165,7 @@ export class TerminalApp {
 
       if (line.length > 0) {
         this.writeStoryLine(line, tags);
+        this.applyStoryEvent(tags);
         if (combatStarted && this.activeCombat) {
           this.writeLine("system", getCombatView(this.activeCombat).observeText);
         }
@@ -172,8 +180,32 @@ export class TerminalApp {
     }
 
     this.renderChoices();
-    this.writeLine("system", "Fine della scena d'esempio.");
+
+    if (getFlag(this.story, "prologo_completato") === true) {
+      this.finishPrologue();
+    } else {
+      this.writeLine("system", "Fine della scena d'esempio.");
+    }
+
     this.input.disabled = true;
+  }
+
+  /** Chiusura del prologo (P36): schermata finale + salvataggio automatico. */
+  private finishPrologue(): void {
+    const banner = document.createElement("div");
+    banner.className = "terminal__end";
+    banner.dataset.testid = "prologue-end";
+    banner.textContent = "Fine del Prologo";
+    this.choices.append(banner);
+
+    try {
+      saveGame(this.story, { storage: this.storage });
+      this.writeLine("system", "Fine del Prologo. Progresso salvato automaticamente.");
+    } catch {
+      // L'autosave e' best-effort: senza storage (alcuni ambienti di test) la
+      // chiusura del prologo resta comunque valida.
+      this.writeLine("system", "Fine del Prologo.");
+    }
   }
 
   private renderChoices(): void {
@@ -281,6 +313,40 @@ export class TerminalApp {
 
     this.activeCombat = startCombat(combatId);
     return true;
+  }
+
+  private applyStoryEvent(tags: string[]): void {
+    const event = findTagValue(tags, "event");
+
+    if (event === DREAM_CLIMAX_EVENT) {
+      this.writeDreamClimaxImage();
+    }
+  }
+
+  private writeDreamClimaxImage(): void {
+    const row = document.createElement("li");
+    row.className = "terminal__line terminal__line--story terminal__line--image";
+    row.dataset.category = "image";
+
+    const figure = document.createElement("figure");
+    figure.className = "terminal__figure";
+
+    const image = document.createElement("img");
+    image.className = "terminal__image";
+    image.dataset.testid = "dream-climax-image";
+    image.src = DREAM_CLIMAX_IMAGE_SRC;
+    image.alt =
+      "Errol afferra la Spada del Lungo Viaggio nel fumo della battaglia, mentre il soldato che la lancia resta di spalle.";
+    image.width = 1672;
+    image.height = 941;
+
+    figure.append(image);
+    row.append(figure);
+    this.transcript.append(row);
+
+    if (typeof row.scrollIntoView === "function") {
+      row.scrollIntoView({ block: "nearest" });
+    }
   }
 
   private executeParserResult(result: ParserResult): void {

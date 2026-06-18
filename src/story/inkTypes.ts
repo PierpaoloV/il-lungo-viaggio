@@ -25,6 +25,8 @@ export type InkStory = {
   currentTags: string[] | null;
   currentChoices: InkChoice[];
   ChooseChoiceIndex(index: number): void;
+  /** Salta a un knot per nome (usato nei test per posizionare lo stato). */
+  ChoosePathString(path: string, resetCallstack?: boolean): void;
   readonly state: InkStoryState;
   readonly variablesState: InkVariablesState;
 };

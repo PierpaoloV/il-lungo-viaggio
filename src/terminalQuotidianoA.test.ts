@@ -101,7 +101,7 @@ describe("Quotidiano A — comandi testuali nel terminale", () => {
     expect(root.textContent).toContain("Hai con te: spada di legno.");
   });
 
-  it("`accompagna vecchio` imposta aiuto_vecchio e converge alla mensa", () => {
+  it("`accompagna vecchio` imposta aiuto_vecchio e converge nel ramo condiviso (P10)", () => {
     const story = createPrologueStory();
     const { root, advanceUntil, advanceUntilButton, send, click } = mountApp(story);
 
@@ -118,10 +118,10 @@ describe("Quotidiano A — comandi testuali nel terminale", () => {
     expect(getFlag(story, "vecchio_accompagnato")).toBe(true);
     expect(getFlag(story, "aiuto_vecchio")).toBe("A_panino_accompagna");
 
+    // P09 -> ramo condiviso P10 (il vecchio nota la spada).
     advanceUntilButton("Ascolta in silenzio");
     click("Ascolta in silenzio");
-    advanceUntil("varchi la soglia della mensa di Mezclar");
-    advanceUntil("il posto di tua madre");
-    expect(root.textContent).toContain("il posto di tua madre");
+    advanceUntil("A cosa serve?");
+    expect(root.textContent).toContain("A cosa serve?");
   });
 });

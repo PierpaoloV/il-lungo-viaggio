@@ -171,6 +171,27 @@ input {
   font-family: var(--font-system);
 }
 
+.terminal__line--image {
+  width: min(100%, 48rem);
+  max-width: 48rem;
+}
+
+.terminal__figure {
+  margin: 0.25rem 0 0;
+}
+
+.terminal__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid rgba(173, 196, 214, 0.24);
+  border-radius: 6px;
+  aspect-ratio: 1672 / 941;
+  object-fit: cover;
+  background: #0a0d11;
+  box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.42);
+}
+
 .terminal__emphasis {
   color: var(--color-accent);
   font-weight: 700;
@@ -234,4 +255,84 @@ input {
 
 .terminal__input::placeholder {
   color: rgba(245, 240, 223, 0.46);
+}
+
+/*
+ * Modalita' sogno (P22-P33): il terminale perde calore. Palette fredda
+ * grigio-blu, testo piu' sottile e bianco, lieve glitch sul cursore/input.
+ * Applicata/rimossa via la classe `terminal--dream` (tag ink `# mode: dream`).
+ */
+.terminal--dream {
+  border-color: rgba(173, 196, 214, 0.28);
+  background: rgba(13, 17, 22, 0.94);
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.5);
+  filter: saturate(0.55) brightness(0.94);
+}
+
+.terminal--dream .terminal__line--story {
+  color: #d3dbe4;
+  font-weight: 300;
+  letter-spacing: 0.012em;
+}
+
+.terminal--dream .terminal__line--system {
+  color: #9aa7b4;
+}
+
+.terminal--dream .terminal__image {
+  border-color: rgba(213, 224, 235, 0.32);
+  box-shadow:
+    0 1rem 2.75rem rgba(0, 0, 0, 0.55),
+    0 0 1.25rem rgba(168, 31, 38, 0.12);
+}
+
+.terminal--dream .terminal__emphasis {
+  color: #e7eef5;
+  text-shadow: 0 0 0.45rem rgba(190, 210, 230, 0.55);
+}
+
+.terminal--dream .terminal__prompt {
+  color: #9fb6c9;
+  animation: dream-flicker 2.4s steps(2, end) infinite;
+}
+
+.terminal--dream .terminal__input {
+  color: #dce4ec;
+  caret-color: #9fb6c9;
+}
+
+@keyframes dream-flicker {
+  0%,
+  92%,
+  100% {
+    opacity: 1;
+  }
+  94% {
+    opacity: 0.35;
+  }
+  96% {
+    opacity: 0.9;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .terminal--dream .terminal__prompt {
+    animation: none;
+  }
+}
+
+/* Schermata finale del prologo (P36): banner quieto al posto delle scelte. */
+.terminal__end {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(225, 176, 95, 0.4);
+  border-radius: 6px;
+  color: var(--color-accent);
+  font-family: var(--font-system);
+  font-size: 1.02rem;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  text-align: center;
+  text-transform: uppercase;
+  background: rgba(122, 78, 33, 0.18);
 }

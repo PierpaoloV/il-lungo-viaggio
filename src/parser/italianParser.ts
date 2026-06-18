@@ -9,6 +9,7 @@ export type CanonicalVerb =
   | "usa"
   | "accompagna"
   | "indica"
+  | "dormi"
   | "attacca"
   | "fuggi"
   | "inventario"
@@ -185,6 +186,12 @@ const VERBS = new Map<string, CanonicalVerb>([
   ["inv", "inventario"],
   ["zaino", "inventario"],
   ["oggetti", "inventario"],
+  ["dormi", "dormi"],
+  ["dormo", "dormi"],
+  ["dormire", "dormi"],
+  ["riposa", "dormi"],
+  ["riposo", "dormi"],
+  ["riposare", "dormi"],
   ["aspetta", "aspetta"],
   ["attendi", "aspetta"],
   ["attendo", "aspetta"],
@@ -220,6 +227,7 @@ export function parseItalianCommand(input: string, context: ParserContext): Pars
   if (
     parsedVerb === "inventario" ||
     parsedVerb === "fuggi" ||
+    parsedVerb === "dormi" ||
     parsedVerb === "aspetta" ||
     parsedVerb === "aiuto"
   ) {
