@@ -71,7 +71,7 @@ Il prologo segue la **spina narrativa principale** dei 36 beat, è **autoconclus
 - **Router comando→storia** — mappa il comando canonico sulla scelta/azione ink valida nel contesto; gestisce i fallback senza rompere l'immersione.
 - **Combattimento** — implementa il modello di `mechanics/combat.md`: aperture leggibili, input ibrido, matrice 2×2 del sogno, allarme→rinforzi, sconfitta morbida.
 - **Stato e memoria persistente** — serializzazione dello stato ink + flag nostri; salvataggio/ripresa.
-- **Shell di presentazione (UI)** — renderer del terminale, bottoni situazionali/aperture, evidenziazione affordance, **styling diegetico** per il sogno, slot per la singola immagine del climax; predisposizione (stub) del pannello 2D.
+- **Shell di presentazione (UI)** — renderer del terminale, bottoni situazionali/aperture, evidenziazione affordance, **styling diegetico** per il sogno, slot per la singola immagine del climax; predisposizione (stub) del pannello 2D. **Tipografia per categoria di testo** (narrazione serif / dialogo corsivo con colore per personaggio / voce di sistema monospace / dream-mode): `mechanics/presentation.md`.
 
 **Modello di interazione.** Ibrido a prevalenza testuale (`mechanics/interaction.md`): **comandi sempre disponibili** (esamina/guarda, vai, segui, prendi, parla, dai, usa, inventario, aspetta, aiuto) + **scelte situazionali** mostrate come bottoni. Obiettivo: neutralizzare il "guess-the-verb".
 

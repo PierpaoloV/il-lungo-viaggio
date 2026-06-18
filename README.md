@@ -2,7 +2,28 @@
 
 Working repository for the future short game based on the old Gico material.
 
-The current goal is narrative organization, not implementation.
+The repository now includes the first playable walking skeleton: a web terminal
+that loads a small prologue scene through inkjs and advances with Enter or
+`aspetta`.
+
+## Run The Web Prototype
+
+Prerequisites: Node.js and npm.
+
+```bash
+npm install
+npm run dev
+```
+
+The dev command starts Vite and opens the browser on localhost. In the terminale
+narrativo, press Enter on an empty command or type `aspetta` to advance the ink
+scene.
+
+Run the integration smoke test with:
+
+```bash
+npm test
+```
 
 ## Structure
 
@@ -11,6 +32,8 @@ The current goal is narrative organization, not implementation.
 - `characters/`: character notes.
 - `world/`: setting, races, places and symbolic objects.
 - `game-outline/`: playable structure, scope and interaction notes.
+- `issues/`: implementation slices for the playable prologue.
+- `src/`: web walking skeleton and sample ink scene.
 - `scripts/`: local project automation.
 
 ## Story Bible Workflow

@@ -18,4 +18,4 @@ Affordance ibride: le **scelte situazionali** compaiono come bottoni cliccabili 
 - #2 (Parser)
 
 ## Riferimenti
-- `mechanics/interaction.md` §2B (scelte situazionali) e §4 (affordance anti guess-the-verb).
+- `mechanics/interaction.md` §2B (scelte situazionali) e §4 (affordance anti guess-the-verb); `mechanics/presentation.md` (stile di bottoni ed evidenziazioni).
