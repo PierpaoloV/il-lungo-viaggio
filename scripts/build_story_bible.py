@@ -26,6 +26,7 @@ EXCLUDED = {
     ROOT / "game-outline" / "prd-prologo.md",
     ROOT / "game-outline" / "agent-brief-prologo.md",
     ROOT / "game-outline" / "blueprint-prologo.md",
+    ROOT / "game-outline" / "issues-prologo.md",
 }
 
 PRIORITY = {
