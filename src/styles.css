@@ -6,6 +6,17 @@
     sans-serif;
   font-synthesis: none;
   line-height: 1.5;
+  --font-story: Georgia, "Times New Roman", Times, serif;
+  --font-system: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  --color-story: #f5f0df;
+  --color-story-muted: #dbcaa9;
+  --color-system: #aeb8aa;
+  --color-input: #d7a866;
+  --color-accent: #e1b05f;
+  --color-mirea: #e0b66f;
+  --color-lesmidoom: #aebf94;
+  --color-soldati: #b4bcc2;
+  --color-ernesto: #f1dfbd;
 }
 
 * {
@@ -68,6 +79,32 @@ input {
   font-weight: 650;
 }
 
+.terminal__controls {
+  display: flex;
+  gap: 0.4rem;
+  margin-left: auto;
+}
+
+.terminal__control {
+  min-height: 2rem;
+  border: 1px solid rgba(245, 240, 223, 0.22);
+  border-radius: 6px;
+  padding: 0.3rem 0.7rem;
+  color: var(--color-system);
+  font-family: var(--font-system);
+  font-size: 0.82rem;
+  background: rgba(245, 240, 223, 0.05);
+  cursor: pointer;
+}
+
+.terminal__control:hover,
+.terminal__control:focus-visible {
+  border-color: rgba(245, 240, 223, 0.5);
+  outline: none;
+  color: #f5f0df;
+  background: rgba(245, 240, 223, 0.1);
+}
+
 .terminal__transcript {
   display: flex;
   flex-direction: column;
@@ -81,21 +118,69 @@ input {
 
 .terminal__line {
   max-width: 48rem;
-  color: #f5f0df;
-  font-family:
-    "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  color: var(--color-story);
   font-size: clamp(0.92rem, 1.8vw, 1.02rem);
   line-height: 1.7;
   overflow-wrap: anywhere;
   white-space: pre-wrap;
 }
 
+.terminal__line--narration {
+  font-family: var(--font-story);
+}
+
+.terminal__line--legend {
+  align-self: center;
+  max-width: 42rem;
+  color: var(--color-story-muted);
+  font-family: var(--font-story);
+  font-style: italic;
+  text-align: center;
+}
+
+.terminal__line--dialogue {
+  color: var(--color-story-muted);
+  font-family: var(--font-story);
+  font-style: italic;
+}
+
+.terminal__line--speaker-mirea {
+  color: var(--color-mirea);
+}
+
+.terminal__line--speaker-lesmidoom {
+  color: var(--color-lesmidoom);
+}
+
+.terminal__line--speaker-soldati,
+.terminal__line--speaker-fabbro {
+  color: var(--color-soldati);
+}
+
+.terminal__line--speaker-ernesto {
+  color: var(--color-ernesto);
+}
+
 .terminal__line--system {
-  color: #b8c7a6;
+  color: var(--color-system);
+  font-family: var(--font-system);
 }
 
 .terminal__line--input {
-  color: #d7a866;
+  color: var(--color-input);
+  font-family: var(--font-system);
+}
+
+.terminal__emphasis {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.terminal__interactable {
+  color: #f0c985;
+  font-weight: 700;
+  text-decoration: underline dotted rgba(240, 201, 133, 0.72);
+  text-underline-offset: 0.18em;
 }
 
 .terminal__choices {
@@ -112,6 +197,7 @@ input {
   border-radius: 6px;
   padding: 0.5rem 0.75rem;
   color: #f8e7c7;
+  font-family: var(--font-system);
   background: rgba(122, 78, 33, 0.34);
 }
 
@@ -134,8 +220,7 @@ input {
 
 .terminal__prompt {
   color: #d7a866;
-  font-family:
-    "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-family: var(--font-system);
 }
 
 .terminal__input {
