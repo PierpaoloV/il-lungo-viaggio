@@ -7,6 +7,10 @@ export type CanonicalVerb =
   | "parla"
   | "dai"
   | "usa"
+  | "accompagna"
+  | "indica"
+  | "attacca"
+  | "fuggi"
   | "inventario"
   | "aspetta"
   | "aiuto";
@@ -126,6 +130,9 @@ const VERBS = new Map<string, CanonicalVerb>([
   ["chiedi", "parla"],
   ["chiedo", "parla"],
   ["chiedere", "parla"],
+  ["chiama", "parla"],
+  ["chiamo", "parla"],
+  ["chiamare", "parla"],
   ["di", "parla"],
   ["dico", "parla"],
   ["dire", "parla"],
@@ -147,6 +154,33 @@ const VERBS = new Map<string, CanonicalVerb>([
   ["adopera", "usa"],
   ["adopero", "usa"],
   ["adoperare", "usa"],
+  ["mangia", "usa"],
+  ["mangio", "usa"],
+  ["mangiare", "usa"],
+  ["accompagna", "accompagna"],
+  ["accompagno", "accompagna"],
+  ["accompagnare", "accompagna"],
+  ["indica", "indica"],
+  ["indico", "indica"],
+  ["indicare", "indica"],
+  ["mostra", "indica"],
+  ["mostro", "indica"],
+  ["mostrare", "indica"],
+  ["attacca", "attacca"],
+  ["attacco", "attacca"],
+  ["attaccare", "attacca"],
+  ["colpisci", "attacca"],
+  ["colpisco", "attacca"],
+  ["colpire", "attacca"],
+  ["ferisci", "attacca"],
+  ["ferisco", "attacca"],
+  ["ferire", "attacca"],
+  ["fuggi", "fuggi"],
+  ["fuggo", "fuggi"],
+  ["fuggire", "fuggi"],
+  ["scappa", "fuggi"],
+  ["scappo", "fuggi"],
+  ["scappare", "fuggi"],
   ["inventario", "inventario"],
   ["inv", "inventario"],
   ["zaino", "inventario"],
@@ -155,6 +189,9 @@ const VERBS = new Map<string, CanonicalVerb>([
   ["attendi", "aspetta"],
   ["attendo", "aspetta"],
   ["attendere", "aspetta"],
+  ["esita", "aspetta"],
+  ["esito", "aspetta"],
+  ["esitare", "aspetta"],
   ["aiuto", "aiuto"],
   ["comandi", "aiuto"],
   ["azioni", "aiuto"]
@@ -180,7 +217,12 @@ export function parseItalianCommand(input: string, context: ParserContext): Pars
 
   const rest = tokens.slice(1);
 
-  if (parsedVerb === "inventario" || parsedVerb === "aspetta" || parsedVerb === "aiuto") {
+  if (
+    parsedVerb === "inventario" ||
+    parsedVerb === "fuggi" ||
+    parsedVerb === "aspetta" ||
+    parsedVerb === "aiuto"
+  ) {
     return command({ verb: parsedVerb });
   }
 
@@ -196,6 +238,19 @@ export function parseItalianCommand(input: string, context: ParserContext): Pars
 
   if (parsedVerb === "vai") {
     return command({ verb: "vai", targetText: targetText(dropFillers(rest)) });
+  }
+
+  if (parsedVerb === "attacca") {
+    const targetWords = dropFillers(rest);
+
+    if (targetWords.length === 0) {
+      return {
+        status: "unknown",
+        message: missingTargetMessage("attacca")
+      };
+    }
+
+    return command({ verb: "attacca", targetText: targetText(targetWords) });
   }
 
   if (parsedVerb === "usa") {
@@ -363,8 +418,14 @@ function missingTargetMessage(verb: CanonicalVerb): string {
       return "Che cosa vuoi dare?";
     case "usa":
       return "Che cosa vuoi usare?";
+    case "attacca":
+      return "Dove vuoi colpire?";
     case "segui":
       return "Chi vuoi seguire?";
+    case "accompagna":
+      return "Chi vuoi accompagnare?";
+    case "indica":
+      return "Che cosa vuoi indicare?";
     default:
       return UNKNOWN_MESSAGE;
   }

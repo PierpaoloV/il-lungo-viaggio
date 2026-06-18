@@ -6,10 +6,27 @@ import { TerminalApp } from "./terminalApp";
 function mountApp() {
   document.body.innerHTML = `<main id="app"></main>`;
   const root = document.querySelector<HTMLElement>("#app")!;
-  const app = new TerminalApp(createPrologueStory(), { root });
+  const story = createPrologueStory();
+  const app = new TerminalApp(story, { root });
   app.start();
 
   return {
+    story,
+    root,
+    form: root.querySelector<HTMLFormElement>("[data-testid='command-form']")!,
+    input: root.querySelector<HTMLInputElement>("[data-testid='command-input']")!
+  };
+}
+
+function mountAppWithSource(source: string) {
+  document.body.innerHTML = `<main id="app"></main>`;
+  const root = document.querySelector<HTMLElement>("#app")!;
+  const story = createPrologueStory(source);
+  const app = new TerminalApp(story, { root });
+  app.start();
+
+  return {
+    story,
     root,
     form: root.querySelector<HTMLFormElement>("[data-testid='command-form']")!,
     input: root.querySelector<HTMLInputElement>("[data-testid='command-input']")!
@@ -142,5 +159,51 @@ describe("TerminalApp walking skeleton", () => {
     expect(root.querySelector(".terminal__emphasis")?.textContent).toBe("spada di legno");
     expect(root.querySelector("[data-object-id='mezclar']")?.textContent).toBe("Mezclar");
     expect(root.querySelector("[data-object-id='bosco']")?.textContent).toBe("bosco");
+  });
+
+  it("renders combat openings as buttons and lets typed attacks set tutorial flags", () => {
+    const source = `
+VAR orco_allarme = false
+VAR colpo_tutorial = "nessuno"
+La creatura alza la Spada. # combat: TutorialOrcoSpada
+Dopo lo scontro.
+-> END
+`;
+    const { root, form, input, story } = mountAppWithSource(source);
+
+    expect(root.textContent).toContain("Aperture: ginocchia");
+    expect(root.textContent).toContain("fianco");
+    expect(
+      Array.from(root.querySelectorAll<HTMLButtonElement>(".terminal__choice")).map(
+        (button) => button.textContent
+      )
+    ).toEqual(["attacca ginocchia", "attacca fianco"]);
+
+    submitCommand(form, input, "attacca testa");
+    expect(story.variablesState.$("orco_allarme")).toBe(true);
+    expect(story.variablesState.$("colpo_tutorial")).toBe("maldestro_non_finale");
+    expect(root.textContent).toContain("l'allarme e' partito");
+
+    submitCommand(form, input, "attacca fianco");
+    expect(story.variablesState.$("orco_allarme")).toBe(true);
+    expect(story.variablesState.$("colpo_tutorial")).toBe("fianco");
+    expect(root.textContent).toContain("l'urlo ha gia' attraversato il fumo");
+  });
+
+  it("combat buttons run through the same command path as typed attacks", () => {
+    const source = `
+VAR orco_allarme = true
+VAR colpo_tutorial = "nessuno"
+La creatura lascia scoperto il fianco. # combat: TutorialOrcoSpada
+-> END
+`;
+    const { root, story } = mountAppWithSource(source);
+    const button = root.querySelector<HTMLButtonElement>(".terminal__choice")!;
+
+    button.click();
+
+    expect(root.textContent).toContain("> attacca ginocchia");
+    expect(story.variablesState.$("orco_allarme")).toBe(false);
+    expect(story.variablesState.$("colpo_tutorial")).toBe("ginocchia");
   });
 });

@@ -42,7 +42,12 @@ describe("parseItalianCommand", () => {
         targetText: "spada",
         secondaryTargetText: "panino"
       }
-    ]
+    ],
+    ["attacca ginocchia", { verb: "attacca", targetText: "ginocchia" }],
+    ["colpisci il fianco", { verb: "attacca", targetText: "fianco" }],
+    ["fuggi", { verb: "fuggi" }],
+    ["scappa", { verb: "fuggi" }],
+    ["esita", { verb: "aspetta" }]
   ])("parses %s", (input, expectedCommand) => {
     expect(parseItalianCommand(input, context)).toEqual({
       status: "command",
@@ -73,6 +78,10 @@ describe("parseItalianCommand", () => {
     expect(parseItalianCommand("esamina luna", context)).toEqual({
       status: "unknown",
       message: "Non capisco. Prova aiuto per vedere cosa puoi fare."
+    });
+    expect(parseItalianCommand("attacca", context)).toEqual({
+      status: "unknown",
+      message: "Dove vuoi colpire?"
     });
   });
 });

@@ -1,12 +1,26 @@
 import { getSceneContext, type SceneContext, type SceneId } from "./game/sampleSceneContext";
 import {
+  attackCombat,
+  describeCombatTarget,
+  getCombatParserObjects,
+  getCombatView,
+  isCombatObjectId,
+  parseCombatId,
+  registerCombatMistake,
+  startCombat,
+  type CombatState,
+  type CombatStepResult,
+  type CombatView
+} from "./combat/combat";
+import {
   normalizeItalianText,
   parseItalianCommand,
   type ParsedCommand,
+  type ParserContext,
   type ParserResult
 } from "./parser/italianParser";
 import type { InkChoice, InkStory } from "./story/inkTypes";
-import { loadGame, saveGame, type StorageLike } from "./state/saveLoad";
+import { getFlag, loadGame, saveGame, setFlag, type StorageLike } from "./state/saveLoad";
 
 type TerminalElements = {
   root: HTMLElement;
@@ -40,6 +54,7 @@ export class TerminalApp {
   private readonly resumeButton: HTMLButtonElement;
   private readonly storage?: StorageLike;
   private sceneId: SceneId = "p00";
+  private activeCombat?: CombatState;
 
   constructor(story: InkStory, elements: TerminalElements) {
     this.story = story;
@@ -113,14 +128,14 @@ export class TerminalApp {
       return;
     }
 
-    const situationalChoice = this.resolveSituationalChoice(command);
+    const situationalChoice = this.activeCombat ? undefined : this.resolveSituationalChoice(command);
 
     if (situationalChoice) {
       this.advanceStory(situationalChoice.index);
       return;
     }
 
-    const parsed = parseItalianCommand(command, this.sceneContext);
+    const parsed = parseItalianCommand(command, this.parserContext);
 
     this.executeParserResult(parsed);
   }
@@ -128,7 +143,9 @@ export class TerminalApp {
   private advanceStory(choiceIndex?: number): void {
     if (typeof choiceIndex === "number") {
       this.story.ChooseChoiceIndex(choiceIndex);
-    } else if (!this.story.canContinue && this.story.currentChoices.length > 0) {
+    } else if (!this.story.canContinue && this.story.currentChoices.length === 1) {
+      // Con una sola continuazione possibile `aspetta` la seleziona da sola; con
+      // piu' scelte (un bivio D9) deve essere il giocatore a decidere.
       this.story.ChooseChoiceIndex(0);
     }
 
@@ -137,9 +154,13 @@ export class TerminalApp {
       const tags = this.story.currentTags ?? [];
       this.applyMode(tags);
       this.applyScene(tags);
+      const combatStarted = this.applyCombat(tags);
 
       if (line.length > 0) {
         this.writeStoryLine(line, tags);
+        if (combatStarted && this.activeCombat) {
+          this.writeLine("system", getCombatView(this.activeCombat).observeText);
+        }
         this.renderChoices();
         return;
       }
@@ -157,6 +178,22 @@ export class TerminalApp {
 
   private renderChoices(): void {
     this.choices.innerHTML = "";
+
+    if (this.activeCombat) {
+      for (const command of getCombatView(this.activeCombat).choices) {
+        const button = document.createElement("button");
+        button.className = "terminal__choice terminal__choice--combat";
+        button.type = "button";
+        button.textContent = command;
+        button.dataset.command = command;
+        button.addEventListener("click", () => {
+          this.handleCommand(command);
+          this.input.focus();
+        });
+        this.choices.append(button);
+      }
+      return;
+    }
 
     for (const choice of this.story.currentChoices) {
       const button = document.createElement("button");
@@ -199,7 +236,7 @@ export class TerminalApp {
       row.classList.add(`terminal__line--speaker-${getSpeakerClassName(presentation.speaker)}`);
     }
 
-    row.append(renderStoryText(text, this.sceneContext));
+    row.append(renderStoryText(text, this.parserContext));
     this.transcript.append(row);
 
     if (typeof row.scrollIntoView === "function") {
@@ -220,9 +257,30 @@ export class TerminalApp {
   private applyScene(tags: string[]): void {
     const scene = findTagValue(tags, "scene");
 
-    if (scene === "p00" || scene === "p01") {
+    if (scene) {
       this.sceneId = scene;
     }
+  }
+
+  private applyCombat(tags: string[]): boolean {
+    if (this.activeCombat) {
+      return false;
+    }
+
+    const combatTag = findTagValue(tags, "combat");
+
+    if (!combatTag) {
+      return false;
+    }
+
+    const combatId = parseCombatId(combatTag);
+
+    if (!combatId) {
+      return false;
+    }
+
+    this.activeCombat = startCombat(combatId);
+    return true;
   }
 
   private executeParserResult(result: ParserResult): void {
@@ -235,6 +293,19 @@ export class TerminalApp {
   }
 
   private executeCommand(command: ParsedCommand): void {
+    if (this.executeCombatCommand(command)) {
+      return;
+    }
+
+    // Un comando testuale (`dai panino`, `accompagna vecchio`, `segui scoiattolo`)
+    // puo' attivare la stessa scelta situazionale del bottone corrispondente.
+    const choiceIndex = this.matchCommandToChoice(command);
+
+    if (choiceIndex !== undefined) {
+      this.advanceStory(choiceIndex);
+      return;
+    }
+
     switch (command.verb) {
       case "aspetta":
         this.advanceStory();
@@ -243,21 +314,163 @@ export class TerminalApp {
         this.writeLine("system", this.sceneContext.look);
         return;
       case "inventario":
-        this.writeLine("system", `Hai con te: ${formatInventory(this.sceneContext)}.`);
+        this.writeLine("system", `Hai con te: ${this.formatInventory()}.`);
         return;
       case "aiuto":
-        this.writeLine("system", formatHelp(this.sceneContext, this.story.currentChoices));
+        this.writeLine(
+          "system",
+          formatHelp(this.sceneContext, this.story.currentChoices, this.activeCombatView)
+        );
         return;
       case "esamina":
         this.writeLine("system", describeTarget(command, this.sceneContext));
+        this.applyExamineEffect(command);
         return;
-      default:
-        this.writeLine("system", "Comando riconosciuto, ma non ha ancora un effetto in questa scena.");
+      default: {
+        const response = this.resolveVerbResponse(command);
+        this.writeLine(
+          "system",
+          response ?? "Comando riconosciuto, ma non ha ancora un effetto in questa scena."
+        );
+      }
     }
+  }
+
+  /** Risolve un comando testuale in una scelta situazionale attualmente disponibile. */
+  private matchCommandToChoice(command: ParsedCommand): number | undefined {
+    if (this.activeCombat) {
+      return undefined;
+    }
+
+    const choiceCommands = this.sceneContext.choiceCommands;
+
+    if (!choiceCommands) {
+      return undefined;
+    }
+
+    const canonical = command.targetText
+      ? `${command.verb} ${normalizeItalianText(command.targetText)}`
+      : command.verb;
+    const entry = choiceCommands.find((candidate) => candidate.commands.includes(canonical));
+
+    if (!entry) {
+      return undefined;
+    }
+
+    const target = normalizeItalianText(entry.choice);
+    const choice = this.story.currentChoices.find(
+      (candidate) => normalizeItalianText(candidate.text) === target
+    );
+
+    return choice?.index;
+  }
+
+  /** Effetto sui flag quando si esamina un bersaglio (es. le tracce nel bosco). */
+  private applyExamineEffect(command: ParsedCommand): void {
+    if (!command.targetId) {
+      return;
+    }
+
+    const effect = this.sceneContext.examineEffects?.[command.targetId];
+
+    if (effect) {
+      setFlag(this.story, effect.name, effect.value);
+    }
+  }
+
+  /** Testo per i verbi che non fanno avanzare la storia (es. `vai nord`, `parla vecchio`). */
+  private resolveVerbResponse(command: ParsedCommand): string | undefined {
+    const responses = this.sceneContext.verbResponses;
+
+    if (!responses) {
+      return undefined;
+    }
+
+    const target = command.targetText ? normalizeItalianText(command.targetText) : undefined;
+    const match = responses.find(
+      (response) =>
+        response.verb === command.verb &&
+        (response.target === undefined || normalizeItalianText(response.target) === target)
+    );
+
+    return match?.text;
+  }
+
+  /** Inventario corrente: il mezzo panino sparisce dopo essere stato donato. */
+  private formatInventory(): string {
+    const items = this.sceneContext.inventory.filter(
+      (item) => !(item.id === "mezzo_panino" && getFlag(this.story, "panino_dato") === true)
+    );
+
+    if (items.length === 0) {
+      return "niente";
+    }
+
+    return items.map((item) => item.label).join(", ");
   }
 
   private get sceneContext(): SceneContext {
     return getSceneContext(this.sceneId);
+  }
+
+  private get parserContext(): ParserContext {
+    if (!this.activeCombat) {
+      return this.sceneContext;
+    }
+
+    return {
+      objects: [...this.sceneContext.objects, ...getCombatParserObjects(this.activeCombat)]
+    };
+  }
+
+  private get activeCombatView(): CombatView | undefined {
+    return this.activeCombat ? getCombatView(this.activeCombat) : undefined;
+  }
+
+  private executeCombatCommand(command: ParsedCommand): boolean {
+    if (!this.activeCombat) {
+      return false;
+    }
+
+    switch (command.verb) {
+      case "attacca":
+        this.applyCombatStep(attackCombat(this.activeCombat, command.targetText));
+        return true;
+      case "aspetta":
+      case "fuggi":
+        this.applyCombatStep(registerCombatMistake(this.activeCombat));
+        return true;
+      case "esamina":
+        if (!command.targetId || isCombatObjectId(command.targetId)) {
+          this.writeLine("system", describeCombatTarget(this.activeCombat, command.targetId));
+          return true;
+        }
+        return false;
+      case "guarda":
+        this.writeLine("system", getCombatView(this.activeCombat).observeText);
+        return true;
+      case "aiuto":
+        this.writeLine(
+          "system",
+          formatHelp(this.sceneContext, this.story.currentChoices, getCombatView(this.activeCombat))
+        );
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  private applyCombatStep(step: CombatStepResult): void {
+    for (const flag of step.flags) {
+      setFlag(this.story, flag.name, flag.value);
+    }
+
+    for (const line of step.lines) {
+      this.writeLine("system", line);
+    }
+
+    this.activeCombat = step.status === "completed" ? undefined : step.state;
+    this.renderChoices();
   }
 
   private resolveSituationalChoice(command: string): InkChoice | undefined {
@@ -353,7 +566,7 @@ function getSpeakerClassName(speaker: string): string {
   return SPEAKER_CLASS_NAMES[speaker] ?? "default";
 }
 
-function renderStoryText(text: string, context: SceneContext): DocumentFragment {
+function renderStoryText(text: string, context: ParserContext): DocumentFragment {
   const fragment = document.createDocumentFragment();
   const emphasisPattern = /\*([^*]+)\*/g;
   let cursor = 0;
@@ -383,7 +596,7 @@ type InteractableMatch = {
   objectId: string;
 };
 
-function renderInteractables(text: string, context: SceneContext): DocumentFragment {
+function renderInteractables(text: string, context: ParserContext): DocumentFragment {
   const fragment = document.createDocumentFragment();
   const matches = findInteractableMatches(text, context);
   let cursor = 0;
@@ -404,7 +617,7 @@ function renderInteractables(text: string, context: SceneContext): DocumentFragm
   return fragment;
 }
 
-function findInteractableMatches(text: string, context: SceneContext): InteractableMatch[] {
+function findInteractableMatches(text: string, context: ParserContext): InteractableMatch[] {
   const matches: InteractableMatch[] = [];
   const candidates = context.objects
     .flatMap((object) =>
@@ -457,11 +670,12 @@ function rangesOverlap(leftStart: number, leftEnd: number, rightStart: number, r
   return leftStart < rightEnd && rightStart < leftEnd;
 }
 
-function formatInventory(context: SceneContext): string {
-  return context.inventory.map((item) => item.label).join(", ");
-}
+function formatHelp(context: SceneContext, choices: InkChoice[], combat?: CombatView): string {
+  if (combat) {
+    const openings = combat.openings.map((opening) => opening.label).join(", ");
+    return `Azioni disponibili: esamina nemico, attacca <apertura>, inventario, guarda. Aperture: ${openings}.`;
+  }
 
-function formatHelp(context: SceneContext, choices: InkChoice[]): string {
   const objects = context.objects.map((object) => object.label).join(", ");
   const baseActions = "aspetta, inventario, guarda, esamina <oggetto>";
   const choiceText = choices.map((choice) => choice.text).join(", ");
