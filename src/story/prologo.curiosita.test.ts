@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { createPrologueStory } from "./createStory";
 import type { InkStory } from "./inkTypes";
-import { getFlag } from "../state/saveLoad";
+import { getFlag, setFlag } from "../state/saveLoad";
 
 /**
  * Payoff di `seed_curiosita_vecchio`: il seme, scritto lungo il Quotidiano ma
@@ -38,7 +38,7 @@ function walkToNight(story: InkStory, curiosita: boolean): string {
   advance(story);
   choose(story, "Segui le tracce");
   advance(story);
-  choose(story, "Chiedi scusa");
+  choose(story, "Avvicinati subito");
   advance(story);
   choose(story, "Offri il panino");
   advance(story);
@@ -50,7 +50,7 @@ function walkToNight(story: InkStory, curiosita: boolean): string {
   advance(story);
   choose(story, "Lo uccido");
   advance(story);
-  choose(story, "Chiedi della battaglia");
+  choose(story, "Chiedi se conosce Errol");
   advance(story);
   choose(story, curiosita ? "Resta vicino al vecchio" : "Aiuta come sempre");
   advance(story);
@@ -66,8 +66,15 @@ function walkToNight(story: InkStory, curiosita: boolean): string {
   return advance(story); // P21
 }
 
-/** Percorre P00 -> P13 e si ferma alle scelte sul racconto di Errol. */
-function walkToErrolChoices(story: InkStory, curiosita: boolean): string[] {
+/**
+ * Percorre P00 -> P13 e si ferma alle scelte sul racconto di Errol.
+ * Con `acumeAlto` si porta `stat_acume` alla soglia (>= 2) prima di P13: il
+ * flag-ponte `acume_vivo` deve sbloccare la domanda extra «Errol da vicino».
+ */
+function walkToErrolChoices(story: InkStory, acumeAlto: boolean): string[] {
+  if (acumeAlto) {
+    setFlag(story, "stat_acume", 2);
+  }
   advance(story);
   choose(story, "Resta sveglio");
   advance(story);
@@ -75,13 +82,13 @@ function walkToErrolChoices(story: InkStory, curiosita: boolean): string[] {
   advance(story);
   choose(story, "Segui le tracce");
   advance(story);
-  choose(story, "Chiedi scusa");
+  choose(story, "Avvicinati subito");
   advance(story);
   choose(story, "Offri il panino");
   advance(story);
   choose(story, "Accompagnalo alla mensa");
   advance(story);
-  choose(story, curiosita ? "Chiedi dove sta andando" : "Ascolta in silenzio");
+  choose(story, "Ascolta in silenzio");
   advance(story);
   choose(story, "Serve a combattere i mostri");
   advance(story);
@@ -90,18 +97,20 @@ function walkToErrolChoices(story: InkStory, curiosita: boolean): string[] {
   return story.currentChoices.map((choice) => choice.text);
 }
 
-describe("Scelta bonus gated dalla curiosita' (P13)", () => {
-  it("con curiosita' alta sblocca la domanda extra su Errol", () => {
+describe("Scelta bonus gated dall'acume (P13)", () => {
+  it("con acume alto il flag-ponte sblocca la domanda extra su Errol", () => {
     const story = createPrologueStory();
     const choices = walkToErrolChoices(story, true);
 
+    expect(getFlag(story, "acume_vivo")).toBe(true);
     expect(choices).toContain("Chiedi com'era Errol da vicino");
   });
 
-  it("senza curiosita' la domanda extra non compare", () => {
+  it("senza acume la domanda extra non compare", () => {
     const story = createPrologueStory();
     const choices = walkToErrolChoices(story, false);
 
+    expect(getFlag(story, "acume_vivo")).toBe(false);
     expect(choices).not.toContain("Chiedi com'era Errol da vicino");
   });
 });

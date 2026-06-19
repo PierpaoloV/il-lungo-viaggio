@@ -463,7 +463,10 @@ export class TerminalApp {
         }
         const response = this.resolveVerbResponse(command);
         if (response) {
-          this.writeLine("system", response);
+          // I verb-response sono narrazione/dialogo diegetico (es. una battuta del
+          // vecchio), non affordance del terminale: vanno in voce serif come la
+          // storia, non nel grigio monospace di sistema.
+          this.writeSceneResponse(response);
           return;
         }
         // Azione sensata che non avanza: rispondi in voce (serif), non con la

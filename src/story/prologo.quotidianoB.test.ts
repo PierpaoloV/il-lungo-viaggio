@@ -62,7 +62,7 @@ function walkB(story: InkStory, options: WalkB): string[] {
   drain(story);
   choose(story, "Segui le tracce");
   drain(story);
-  choose(story, "Chiedi scusa");
+  choose(story, "Avvicinati subito");
   drain(story);
   choose(story, options.accompagnato ? "Offri il panino" : "Tienilo");
   drain(story);
@@ -84,7 +84,7 @@ function walkB(story: InkStory, options: WalkB): string[] {
   scenes.push(...drain(story)); // P11 -> P12
   choose(story, MOSTRO_CHOICE[options.mostro]);
   scenes.push(...drain(story)); // P13
-  choose(story, "Chiedi della battaglia");
+  choose(story, "Chiedi se conosce Errol");
   scenes.push(...drain(story)); // P14
   choose(story, "Aiuta come sempre");
   scenes.push(...drain(story)); // P15

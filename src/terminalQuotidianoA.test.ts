@@ -88,14 +88,14 @@ describe("Quotidiano A — comandi testuali nel terminale", () => {
 
     advanceUntilButton("Segui le tracce");
     click("Segui le tracce");
-    advanceUntilButton("Chiedi scusa");
-    click("Chiedi scusa");
+    advanceUntilButton("Avvicinati subito");
+    click("Avvicinati subito");
     advanceUntilButton("Offri il panino");
 
     send("dai panino");
 
     expect(getFlag(story, "panino_dato")).toBe(true);
-    expect(root.textContent).toContain("Il vecchio accetta senza fronzoli");
+    expect(root.textContent).toContain("Allunghi il panno senza spiegare niente");
 
     send("inventario");
     expect(root.textContent).toContain("Hai con te: spada di legno.");
@@ -107,8 +107,8 @@ describe("Quotidiano A — comandi testuali nel terminale", () => {
 
     advanceUntilButton("Segui le tracce");
     click("Segui le tracce");
-    advanceUntilButton("Chiedi scusa");
-    click("Chiedi scusa");
+    advanceUntilButton("Avvicinati subito");
+    click("Avvicinati subito");
     advanceUntilButton("Offri il panino");
     send("dai panino");
     advanceUntilButton("Accompagnalo alla mensa");

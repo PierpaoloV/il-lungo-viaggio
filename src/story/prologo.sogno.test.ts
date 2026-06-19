@@ -60,7 +60,7 @@ function walkToP22(story: InkStory): void {
   drain(story);
   choose(story, "Segui le tracce");
   drain(story);
-  choose(story, "Chiedi scusa");
+  choose(story, "Avvicinati subito");
   drain(story);
   choose(story, "Offri il panino");
   drain(story);
@@ -72,7 +72,7 @@ function walkToP22(story: InkStory): void {
   drain(story);
   choose(story, "Lo uccido");
   drain(story);
-  choose(story, "Chiedi della battaglia");
+  choose(story, "Chiedi se conosce Errol");
   drain(story);
   choose(story, "Aiuta come sempre");
   drain(story);

@@ -70,9 +70,9 @@ function walk(story: InkStory, options: WalkOptions): string[] {
 
   choose(story, "Segui le tracce");
 
-  // P05: l'urto
+  // P05: la caduta (aiuto non rifiutabile)
   seen.push(...sceneTags(advanceToChoices(story)));
-  choose(story, "Chiedi scusa");
+  choose(story, "Avvicinati subito");
 
   // P06: il mezzo panino
   seen.push(...sceneTags(advanceToChoices(story)));

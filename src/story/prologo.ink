@@ -1,5 +1,12 @@
 VAR leggenda_ascoltata = false
 VAR bosco_tracce_osservate = false
+// Statistiche diegetiche invisibili (0-3): seminate dai gesti dell'incontro.
+VAR stat_empatia = 0
+VAR stat_coraggio = 0
+VAR stat_acume = 0
+// Flag-ponte: il sistema topics confronta solo per uguaglianza, quindi una soglia
+// (stat_acume >= 2) viene "tradotta" in un booleano da gatare scelte e argomenti.
+VAR acume_vivo = false
 VAR panino_dato = false
 VAR vecchio_accompagnato = false
 VAR aiuto_vecchio = ""
@@ -80,34 +87,69 @@ Se guardi bene, sembra tutto una pista.
 
 === p05 ===
 Cammini con gli occhi bassi per non perdere la pista. Un passo, un altro, una radice da saltare. # scene: p05
-Poi sbatti contro qualcosa di grande e morbido.
-"Ehi, attento a dove vai, ragazzino." # voce: vecchio
-Davanti a te c'e' un anziano in tunica marrone. Sembra stanco come chi ha camminato troppo e dormito poco.
+Poi lo vedi.
+Un vecchio in tunica marrone e' seduto contro il tronco piu' grosso, una gamba tesa davanti come un ramo caduto. La caviglia e' piegata su una radice che spunta dalla terra. Non ha urlato. Non ha chiamato nessuno. Aspetta, con la testa bassa e le mani sulle ginocchia, che il dolore faccia quello che deve fare.
+Ti fermi. Non decidi di fermarti: accade.
+Il vecchio ti sente, alza gli occhi. La sua faccia e' quella di qualcuno che ha camminato troppo e dormito poco.
+"Non ti spaventare," dice. "E' la radice che non avevo visto." # voce: vecchio # peso: scelta
 
-* [Chiedi scusa]
-    "Scusa, non ti avevo visto," dici. Il vecchio fa un gesto morbido con la mano, senza rancore.
-    -> p06
-* [Resta zitto]
-    Resti in silenzio, la spada stretta in pugno. Il vecchio sospira, poi parla lui.
-    -> p06
+* [Avvicinati subito]
+    ~ stat_empatia = stat_empatia + 1
+    Ti metti in ginocchio accanto alla gamba tesa senza pensarci. Il vecchio ti guarda come se il gesto lo avesse sorpreso, ma non arretra.
+    "Sai cosa stai guardando?" chiede. # voce: vecchio
+    "No," dici. "Ma stai qua."
+    -> p05_gather
+* [Chiedi se sta bene]
+    ~ stat_acume = stat_acume + 1
+    "Stai bene?" La domanda e' piccola, un po' inutile data la posizione, e lo sai anche tu mentre la dici.
+    Il vecchio ti guarda. "Abbastanza. La caviglia regge. Il problema e' rimettersi in piedi." # voce: vecchio
+    Ti inginocchi accanto a lui.
+    -> p05_gather
+* [Guarda la caviglia]
+    ~ stat_acume = stat_acume + 1
+    Guardi la caviglia senza sapere bene cosa cercare. E' gonfia ma non esce sangue, quindi forse non e' rotta.
+    "Neanche a me sembra," dice il vecchio. "Ma aiutarmi a rialzarmi non sarebbe una cattiva idea." # voce: vecchio
+    -> p05_gather
+
+=== p05_gather ===
+Lo aiuti a rimettersi in piedi. Lui pesa meno di quanto pensi. O forse hai solo tirato piu' forte del necessario, perche' vi trovate entrambi un po' piu' scomposti di quanto vorreste. # scene: p05
+Si regge. Fa qualche passo cauto. La caviglia tiene.
+"Grazie," dice. Non lo dice come se fosse dovuto. Lo dice come chi e' abituato a bastare a se stesso e trova strano doverlo a qualcun altro. # voce: vecchio
+-> p06
 
 === p06 ===
-Il vecchio guarda il panno che spunta dalla tua tasca. Non lo chiede. Lo nota soltanto. # scene: p06
-Tu senti il peso del mezzo panino come se fosse diventato piu' grande.
-Hai fame, ma lui sembra averne di piu'. # peso: scelta
+Il vecchio sistema la tunica con due mani, poi porta una mano alla borsa di cuoio legata alla cintura con un nodo doppio, strano. La controlla con le dita, una volta, veloce, come chi verifica che una cosa sia ancora al suo posto. # scene: p06
+Ti viene da chiedere cosa ci sia dentro. Non lo fai.
+Nella tua tasca c'e' il mezzo panino nel panno. Lo senti attraverso il tessuto. Hai fame. Lui sembra averne di piu': e' il tipo di stanchezza che include anche il mangiare, o non mangiare. # peso: scelta
 
 * [Offri il panino]
     ~ panino_dato = true
-    Allunghi il panno. Il vecchio accetta senza fronzoli e mangia piano, come chi non spreca niente.
-    -> p07
+    ~ stat_empatia = stat_empatia + 1
+    Allunghi il panno senza spiegare niente. Non sei sicuro di cosa ti abbia mosso: forse il fatto che lui non lo ha chiesto.
+    Il vecchio guarda la tua mano. Poi il panino. Poi te.
+    "Non ho niente da darti in cambio," dice. # voce: vecchio
+    "Non ti ho chiesto niente," dici tu.
+    Accetta. Mangia piano, come chi non spreca niente.
+    -> p06b
 * [Tienilo]
     ~ panino_dato = false
-    Ti stringi nelle spalle e lasci il panino dov'e'. Il vecchio non insiste.
-    -> p07
+    Il mezzo panino resta dov'e'. Il vecchio non lo guarda una seconda volta.
+    -> p06b
+
+=== p06b ===
+"Come ti chiami?" chiede il vecchio. # scene: p06 # voce: vecchio
+"Ernesto."
+Annuisce, lento. "Lesmidoom. Ma i vecchi si confondono con i nomi: chiamami come vuoi." # voce: vecchio
+Lesmidoom. Il nome e' troppo grande per questo bosco. Non sai dove metterlo.
+Lui abbassa lo sguardo sulla spada di legno alla tua cintura. Non ride.
+"Di dove sei?" # voce: vecchio
+"Di Mezclar. Il paese qui vicino."
+"Lo so dov'e'. Ci vengo." Una pausa. "O ci provo." # voce: vecchio
+-> p07
 
 === p07 ===
 Il vecchio si pulisce le dita sulla tunica e guarda tra gli alberi. # scene: p07
-"Vieni dalla citta' vicina, vero? Mi hanno detto che a Mezclar c'e' una mensa per i viandanti. Da solo potrei perdermi. Mi accompagneresti?" # voce: vecchio
+"A Mezclar c'e' una mensa per i viandanti, vero? Con questa caviglia, da solo potrei perdermi. Mi accompagneresti?" # voce: vecchio
 Il sentiero verso casa sembra facile quando lo conosci. Per lui no. # peso: scelta
 
 * [Accompagnalo alla mensa]
@@ -204,21 +246,43 @@ La domanda ti resta addosso per un istante. Fame la capisci. Mostro anche. Le du
     -> p13
 
 === p13 ===
+{ stat_acume >= 2:
+    ~ acume_vivo = true
+}
 Il vecchio non dice che hai torto. Si limita a guardare davanti a se'. # scene: p13
-"Una volta, nel continente di Vaargal, c'era un eroe. Errol il Liberatore. I bardi lo nominano ancora, ma spesso saltano il pezzo in cui era solo un uomo stanco, con troppa guerra intorno." # voce: vecchio
-Tu conosci quel nome. Errol. Il tipo di nome che sulle bocche degli adulti diventa piu' grande della persona.
+"Una volta, nel continente di Vaargal, c'era un eroe. Errol il Liberatore. I bardi lo nominano ancora, ma spesso saltano il pezzo in cui era solo un uomo stanco, con troppa guerra intorno." # voce: lesmidoom
+Tu conosci quel nome. Errol. Il tipo di nome che sulle bocche degli adulti diventa piu' grande della persona. # peso: scelta
 
-* [Chiedi della battaglia]
+* [Chiedi perche' era stanco]
     ~ dialogo_errol_ricevuto = true
-    "Si batte' con la Spada del Lungo Viaggio," dice il vecchio, e non spiega altro. # voce: vecchio
+    Glielo chiedi prima di decidere se fosse una domanda furba o no.
+    Il vecchio si ferma un momento. Non per trovare le parole — le parole le ha gia'. Per scegliere quali dare.
+    "Perche' alcune vittorie costano piu' della sconfitta che evitano." # voce: lesmidoom
+    Tu aspetti un secondo. La frase e' bella ma non la capisci del tutto, e quella parte che non capisci ti preme come un nodo.
+    "Ma in che senso? Cosa pesava?"
+    Il vecchio non risponde. Porta la mano alla borsa, la sistema con due dita — quella cura veloce di chi controlla qualcosa senza volerlo mostrare — e nel farlo allunga il passo di mezzo punto, tanto che quasi non lo noti. Ma lo noti.
+    Camminate avanti. L'argomento non c'e' piu', o almeno non e' piu' suo. Tu hai ancora la domanda in bocca, ma non sai piu' bene dove metterla.
     -> p14
-* [Lascia che il racconto resti li']
+* [Chiedi se conosce Errol]
     ~ dialogo_errol_ricevuto = true
-    Lasci che il nome resti sospeso, senza chiedere altro.
+    Il vecchio non risponde subito. Lascia che i vostri passi riempiano il silenzio per qualche secondo.
+    "Ho incontrato molta gente nel corso degli anni. Alcune persone restano." # voce: lesmidoom
+    Fa una pausa. Poi, quasi per se': "Errol e' rimasto." # voce: lesmidoom
+    Non aggiunge altro. Alza lo sguardo verso il sentiero davanti, e con quel gesto porta la mano alla borsa — quasi senza pensarci, due dita che sistemano la cinghia — e il passo si fa appena piu' lungo.
+    Non sai cosa ha messo via. Ma sai che e' messo via.
     -> p14
-* { seed_curiosita_vecchio == "alta" } [Chiedi com'era Errol da vicino]
+* [Non chiedere niente]
     ~ dialogo_errol_ricevuto = true
-    "Stanco," dice il vecchio. "Come chi ha vinto e non sa ancora cosa farne." # voce: vecchio
+    Tu non dici niente. Forse aspetti che il racconto continui da solo.
+    Il vecchio aspetta anche lui, un momento — non per imbarazzo, ma come chi misura se una porta e' aperta. Poi annuisce, lento, per qualcosa che non ti riguarda.
+    Sistema la borsa alla cintura con due dita e allunga il passo di mezzo punto. Insieme. Come se fossero la stessa cosa.
+    Camminate avanti in silenzio, e il nome di Errol resta tra voi come una cosa appesa senza chiodo.
+    -> p14
+* { acume_vivo } [Chiedi com'era Errol da vicino]
+    ~ dialogo_errol_ricevuto = true
+    Il vecchio ti guarda di lato — non sorpreso dalla domanda, ma quasi sorpreso da chi l'ha fatta.
+    "Stanco," dice. "Come chi ha vinto e non sa ancora cosa farne." # voce: lesmidoom
+    Porta la mano alla borsa, la sistema. Allunga il passo.
     -> p14
 
 === p14 ===

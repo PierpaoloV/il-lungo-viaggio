@@ -99,6 +99,12 @@ const TRACCE: ParserObject = {
   aliases: ["tracce", "pista", "segni", "impronte"]
 };
 
+const BORSA: ParserObject = {
+  id: "borsa",
+  label: "la borsa",
+  aliases: ["borsa", "borsa di cuoio", "sacca", "cuoio"]
+};
+
 const MIREA: ParserObject = {
   id: "mirea",
   label: "Mirea",
@@ -159,6 +165,10 @@ const SPADA_DESC =
 const PANINO_DESC = "Pane comune, un po' schiacciato. Ha l'odore della mattina.";
 const VECCHIO_DESC =
   "Tunica marrone, mani magre, passo incerto. Non fa paura; sembra perso.";
+const BORSA_DESC_BOSCO =
+  "Cuoio consunto, legata alla cintura con un nodo doppio. Non pesa niente, eppure la sua mano ci torna sopra ogni tanto, come per sentire che c'e' ancora. Non vedi cosa contiene.";
+const BORSA_DESC_MENSA =
+  "Posata accanto a lui come un animale tranquillo. Sembra vuota, o quasi. La sua mano ci torna sopra ogni tanto.";
 const LESMIDOOM_DESC = "Adesso ha un nome, ma non e' diventato piu' facile da capire.";
 
 const SCENES: Record<string, SceneContext> = {
@@ -300,7 +310,7 @@ const SCENES: Record<string, SceneContext> = {
       VECCHIO,
       TRACCE
     ],
-    look: "Bosco piu' fitto, ma non remoto. Davanti a te il vecchio aspetta.",
+    look: "Bosco piu' fitto, ma non remoto. Un vecchio e' seduto contro il tronco piu' grosso, la caviglia piegata su una radice.",
     descriptions: {
       spada_legno: "Ti accorgi di tenerla stretta.",
       mezzo_panino: PANINO_DESC,
@@ -311,18 +321,21 @@ const SCENES: Record<string, SceneContext> = {
       vecchio: { name: "seed_curiosita_vecchio", value: "alta" }
     },
     choiceCommands: [
-      { commands: ["parla vecchio", "parla anziano"], choice: "Chiedi scusa" }
+      { commands: ["parla vecchio", "parla anziano"], choice: "Chiedi se sta bene" },
+      { commands: ["aiuta vecchio", "aiuta anziano", "avvicinati"], choice: "Avvicinati subito" },
+      { commands: ["esamina caviglia", "guarda caviglia"], choice: "Guarda la caviglia" }
     ]
   },
   p06: {
     sceneId: "p06",
     inventory: INVENTORY,
-    objects: [...SHARED_OBJECTS, VECCHIO],
-    look: "Bosco, vicino al vecchio. Il panno del panino spunta dalla tua tasca.",
+    objects: [...SHARED_OBJECTS, VECCHIO, BORSA],
+    look: "Bosco, vicino al vecchio. Il panno del panino spunta dalla tua tasca, e lui controlla la borsa alla cintura.",
     descriptions: {
       spada_legno: SPADA_DESC,
       mezzo_panino: "Adesso sembra meno tuo.",
-      vecchio: "Quando guarda il panino, non lo chiede. Lo nota soltanto."
+      vecchio: "Quando guarda il panino, non lo chiede. Lo nota soltanto.",
+      borsa: BORSA_DESC_BOSCO
     },
     verbResponses: [
       { verb: "parla", target: "vecchio", text: '"Non voglio rubarti la merenda, ragazzo," dice il vecchio.' }
@@ -337,6 +350,7 @@ const SCENES: Record<string, SceneContext> = {
     objects: [
       ...SHARED_OBJECTS,
       VECCHIO,
+      BORSA,
       { id: "sentiero", label: "il sentiero", aliases: ["sentiero", "strada", "mensa"] },
       { id: "sud", label: "sud", aliases: ["sud"] }
     ],
@@ -345,6 +359,7 @@ const SCENES: Record<string, SceneContext> = {
       spada_legno: SPADA_DESC,
       mezzo_panino: PANINO_DESC,
       vecchio: "Aspetta una risposta con pazienza, ma sembra davvero stanco.",
+      borsa: BORSA_DESC_BOSCO,
       sentiero: "Da qui si torna verso i campi.",
       sud: "Mezclar e' laggiu', lontana ma raggiungibile."
     },
@@ -384,6 +399,7 @@ const SCENES: Record<string, SceneContext> = {
     objects: [
       ...SHARED_OBJECTS,
       VECCHIO,
+      BORSA,
       { id: "strada", label: "la strada", aliases: ["strada", "sentiero"] },
       { id: "mensa", label: "la mensa", aliases: ["mensa"] }
     ],
@@ -392,6 +408,7 @@ const SCENES: Record<string, SceneContext> = {
       spada_legno: SPADA_DESC,
       mezzo_panino: PANINO_DESC,
       vecchio: "Parla poco di se', ma ogni frase sembra venire da lontano.",
+      borsa: BORSA_DESC_BOSCO,
       strada: "Campi, polvere, Mezclar che si avvicina.",
       mensa: "Odore di zuppa e legno caldo."
     },
@@ -402,13 +419,14 @@ const SCENES: Record<string, SceneContext> = {
   p10: {
     sceneId: "p10",
     inventory: INVENTORY,
-    objects: [...SHARED_OBJECTS, VECCHIO],
+    objects: [...SHARED_OBJECTS, VECCHIO, BORSA],
     look: "Sentiero o tavolo della mensa: in entrambi i casi il vecchio guarda la tua spada.",
     descriptions: {
       spada_legno:
         "Quando la impugni, il mondo diventa piu' semplice: tu da una parte, i mostri dall'altra.",
       mezzo_panino: PANINO_DESC,
-      vecchio: "Non ride della tua spada."
+      vecchio: "Non ride della tua spada.",
+      borsa: BORSA_DESC_BOSCO
     },
     choiceCommands: [
       { commands: ["parla vecchio"], choice: "Serve a combattere i mostri" }
@@ -417,23 +435,25 @@ const SCENES: Record<string, SceneContext> = {
   p11: {
     sceneId: "p11",
     inventory: INVENTORY,
-    objects: [...SHARED_OBJECTS, VECCHIO],
+    objects: [...SHARED_OBJECTS, VECCHIO, BORSA],
     look: "La conversazione continua. Il vecchio ti ascolta con calma.",
     descriptions: {
       spada_legno: "Leggera, tua, coraggiosa.",
       mezzo_panino: PANINO_DESC,
-      vecchio: "Ti ascolta come se la risposta fosse importante, ma non sembra sorpreso."
+      vecchio: "Ti ascolta come se la risposta fosse importante, ma non sembra sorpreso.",
+      borsa: BORSA_DESC_BOSCO
     }
   },
   p12: {
     sceneId: "p12",
     inventory: INVENTORY,
-    objects: [...SHARED_OBJECTS, VECCHIO],
+    objects: [...SHARED_OBJECTS, VECCHIO, BORSA],
     look: "La conversazione resta sospesa. La domanda del vecchio ti pesa addosso.",
     descriptions: {
       spada_legno: "Ti fa sentire piu' sicuro mentre rispondi.",
       mezzo_panino: PANINO_DESC,
-      vecchio: "Non ti corregge. Non sembra neanche voler vincere la discussione."
+      vecchio: "Non ti corregge. Non sembra neanche voler vincere la discussione.",
+      borsa: BORSA_DESC_BOSCO
     }
   },
   p13: {
@@ -442,6 +462,7 @@ const SCENES: Record<string, SceneContext> = {
     objects: [
       ...SHARED_OBJECTS,
       VECCHIO,
+      BORSA,
       { id: "errol", label: "Errol", aliases: ["errol", "liberatore"] }
     ],
     look: "Ultimo tratto verso Mezclar, o tavolo della mensa. Il vecchio parla di Errol.",
@@ -449,12 +470,13 @@ const SCENES: Record<string, SceneContext> = {
       spada_legno: SPADA_DESC,
       mezzo_panino: PANINO_DESC,
       vecchio: "Sembra sapere piu' di quanto dice.",
+      borsa: BORSA_DESC_BOSCO,
       errol: "Per te e' un eroe. Uno di quelli veri."
     },
     choiceCommands: [
       {
         commands: ["parla vecchio", "parla errol"],
-        choice: "Chiedi della battaglia"
+        choice: "Chiedi se conosce Errol"
       }
     ],
     topics: [
@@ -483,6 +505,7 @@ const SCENES: Record<string, SceneContext> = {
     objects: [
       ...SHARED_OBJECTS,
       VECCHIO,
+      BORSA,
       MIREA,
       { id: "tavoli", label: "i tavoli", aliases: ["tavoli", "tavolo"] }
     ],
@@ -491,6 +514,7 @@ const SCENES: Record<string, SceneContext> = {
       spada_legno: SPADA_DESC,
       mezzo_panino: PANINO_DESC,
       vecchio: "Ora che e' seduto, la stanchezza gli cade addosso.",
+      borsa: BORSA_DESC_MENSA,
       mirea: "Si muove tra i tavoli senza alzare la voce. Se serve qualcosa, lei lo vede.",
       tavoli: "Segni di coltelli, ciotole, gomiti, giorni tutti uguali."
     }
@@ -501,6 +525,7 @@ const SCENES: Record<string, SceneContext> = {
     objects: [
       ...SHARED_OBJECTS,
       VECCHIO,
+      BORSA,
       MIREA,
       { id: "ciotola", label: "la ciotola", aliases: ["ciotola", "scodella"] },
       { id: "pane", label: "il pane", aliases: ["pane"] }
@@ -510,6 +535,7 @@ const SCENES: Record<string, SceneContext> = {
       spada_legno: SPADA_DESC,
       mezzo_panino: PANINO_DESC,
       vecchio: "Mangia senza fingere: ha fame davvero.",
+      borsa: BORSA_DESC_MENSA,
       mirea: "Ti guarda lavorare, poi guarda il vecchio.",
       ciotola: "Quasi vuota in fretta.",
       pane: "Pane semplice, di quello che non manca mai sui tavoli di Mezclar."
@@ -520,12 +546,13 @@ const SCENES: Record<string, SceneContext> = {
   p16: {
     sceneId: "p16",
     inventory: INVENTORY,
-    objects: [...SHARED_OBJECTS, LESMIDOOM, MIREA],
+    objects: [...SHARED_OBJECTS, LESMIDOOM, BORSA, MIREA],
     look: "Davanti a Mirea, il vecchio dice il suo nome: Lesmidoom.",
     descriptions: {
       spada_legno: SPADA_DESC,
       mezzo_panino: PANINO_DESC,
       lesmidoom: LESMIDOOM_DESC,
+      borsa: BORSA_DESC_MENSA,
       mirea: "Per un istante resta immobile."
     }
   },
@@ -535,6 +562,7 @@ const SCENES: Record<string, SceneContext> = {
     objects: [
       ...SHARED_OBJECTS,
       LESMIDOOM,
+      BORSA,
       MIREA,
       { id: "mano", label: "la mano di Mirea", aliases: ["mano", "mani", "dita"] }
     ],
@@ -542,6 +570,7 @@ const SCENES: Record<string, SceneContext> = {
     descriptions: {
       spada_legno: SPADA_DESC,
       lesmidoom: "Sembra accorgersene, ma non la costringe a parlare.",
+      borsa: BORSA_DESC_MENSA,
       mirea: "Ferma. Troppo ferma.",
       mano: "Ferma. Troppo ferma."
     }
@@ -549,11 +578,12 @@ const SCENES: Record<string, SceneContext> = {
   p18: {
     sceneId: "p18",
     inventory: INVENTORY,
-    objects: [...SHARED_OBJECTS, LESMIDOOM, MIREA],
+    objects: [...SHARED_OBJECTS, LESMIDOOM, BORSA, MIREA],
     look: "Lesmidoom si volta verso di te e ti guarda come se ti stesse aspettando.",
     descriptions: {
       spada_legno: SPADA_DESC,
       lesmidoom: "Non sembra potente. Sembra certo.",
+      borsa: BORSA_DESC_MENSA,
       mirea: "Vorrebbe dire qualcosa, ma non trova una forma semplice."
     }
   },
@@ -563,6 +593,7 @@ const SCENES: Record<string, SceneContext> = {
     objects: [
       ...SHARED_OBJECTS,
       LESMIDOOM,
+      BORSA,
       MIREA,
       { id: "frase", label: "la frase", aliases: ["frase", "viaggio", "saluto"] }
     ],
@@ -570,6 +601,7 @@ const SCENES: Record<string, SceneContext> = {
     descriptions: {
       spada_legno: SPADA_DESC,
       lesmidoom: "Si congeda con un sorriso stanco.",
+      borsa: BORSA_DESC_MENSA,
       mirea: "Si e' fermata di nuovo.",
       frase: "Non capisci perche' dovrebbe pesare."
     }
