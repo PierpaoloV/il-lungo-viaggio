@@ -66,7 +66,13 @@ function walkToP22(story: InkStory): void {
   drain(story);
   choose(story, "Accompagnalo alla mensa");
   drain(story);
-  choose(story, "Ascolta in silenzio");
+  choose(story, "No. Li conosco."); // cammino: "Non hai paura dei boschi"
+  drain(story);
+  choose(story, "Ascolta in silenzio"); // cammino_seme
+  drain(story);
+  choose(story, "Combatto i mostri"); // D1
+  drain(story);
+  choose(story, "aiutare le persone"); // D2
   drain(story);
   choose(story, "Serve a combattere i mostri");
   drain(story);

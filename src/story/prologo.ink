@@ -149,8 +149,8 @@ Lui abbassa lo sguardo sulla spada di legno alla tua cintura. Non ride.
 
 === p07 ===
 Il vecchio si pulisce le dita sulla tunica e guarda tra gli alberi. # scene: p07
-"A Mezclar c'e' una mensa per i viandanti, vero? Con questa caviglia, da solo potrei perdermi. Mi accompagneresti?" # voce: vecchio
-Il sentiero verso casa sembra facile quando lo conosci. Per lui no. # peso: scelta
+"La mensa di tua madre da' da sedere ai viandanti, vero?" dice. "Con questa caviglia, pero', non so se trovo la strada da solo." # voce: vecchio
+Il sentiero verso casa lo conosci a memoria. Per lui no. # peso: scelta
 
 * [Accompagnalo alla mensa]
     ~ vecchio_accompagnato = true
@@ -159,55 +159,163 @@ Il sentiero verso casa sembra facile quando lo conosci. Per lui no. # peso: scel
     - else:
         ~ aiuto_vecchio = "C_no_panino_accompagna"
     }
-    Annuisci e gli fai cenno di seguirti verso i campi.
-    -> p09
-* [Indicagli la strada]
-    "Un povero anziano non puo' viaggiare da solo, mi sono gia' perso tre volte," dice il vecchio. # voce: vecchio
-    ** [Indica la strada e basta]
-        ~ vecchio_accompagnato = false
-        { panino_dato:
-            ~ aiuto_vecchio = "B_panino_non_accompagna"
-            Gli mostri la direzione di Mezclar e lo saluti. Lui ti guarda andare via.
-            -> p08
-        - else:
-            ~ aiuto_vecchio = "D_no_panino_indica"
-            Gli mostri la direzione di Mezclar e lo saluti. Lui ti guarda andare via.
-            -> p09
-        }
-    ** [Va bene, ti accompagno]
-        ~ vecchio_accompagnato = true
-        { panino_dato:
-            ~ aiuto_vecchio = "A_panino_accompagna"
-        - else:
-            ~ aiuto_vecchio = "C_no_panino_accompagna"
-        }
-        Sospiri, poi gli fai cenno di seguirti.
-        -> p09
+    Gli fai cenno di seguirti verso i campi. Procede piano, ma ti tiene il passo.
+    -> cammino
+* [Lascialo andare da solo]
+    ~ vecchio_accompagnato = false
+    { panino_dato:
+        ~ aiuto_vecchio = "B_panino_non_accompagna"
+    - else:
+        ~ aiuto_vecchio = "D_no_panino_indica"
+    }
+    Gli indichi la direzione di Mezclar e ti volti verso casa. C'e' qualcosa, in lui, che non sai nominare, e i piedi decidono per te, verso il conosciuto.
+    -> p08
 
+// PARTE C — percorso rimorso / mensa (vecchio_accompagnato = false).
 === p08 ===
 ~ rimorso_tornato = true
-Cammini verso casa da solo. Hai fatto una cosa buona, ti dici. Gli hai dato il panino. Gli hai indicato la strada. # scene: p08
-Dopo pochi passi, il bosco sembra piu' grande di prima. Ti torna in testa la sua voce: "Mi sono gia' perso tre volte."
-Quando torni indietro, il vecchio non c'e' piu'. Le tracce dello scoiattolo, le tue impronte, le foglie schiacciate: tutto si mescola. Ti viene caldo alle orecchie.
+Torni verso casa da solo. # scene: p08
+All'inizio sembra giusto. Hai fatto quello che potevi: gli hai indicato la strada, e lui sa dove andare. O quasi.{ panino_dato:  E poi gli hai anche dato il panino, quindi.}
+Pero' il bosco non si riduce come dovrebbe. I tronchi sembrano piu' larghi, le ombre piu' profonde, e il sentiero che conosci a memoria fa una curva che giuri non c'era prima.
+Ti torna in testa la sua voce. *Mi sono gia' perso tre volte.*
+Non era una lamentela. Lo capisci adesso, a qualche passo di distanza. Era solo un fatto.
+Ti fermi. Fai mezzo giro. Poi ti dici che sei stupido a tornare indietro per un vecchio che ha le gambe e sa parlare. Ti dici che la mensa e' la', che lui trovera' la strada, che hai cose da fare. Non sai bene quali. # peso: scelta
 
+* [Torna a cercarlo]
+    Torni indietro lo stesso.
+    Il punto dove l'hai lasciato e' vuoto. Le foglie schiacciate dai suoi piedi si mescolano con le tue impronte, con le zampette dello scoiattolo, con qualcos'altro che non riesci a leggere. Cerchi un po', senza ammettere a te stesso che stai cercando.
+    Niente.
+    { panino_dato:
+        Hai ancora il panno vuoto in tasca. Ti sembra piu' leggero del necessario.
+    - else:
+        Il mezzo panino e' ancora in tasca. Non hai piu' voglia di finirlo.
+    }
+    Non ti senti in colpa, non sai ancora bene cos'e' la colpa. Senti solo qualcosa di caldo alle orecchie e qualcosa di pesante sotto lo sterno, come quando corri troppo forte e il respiro non riesce a stare dietro.
+    -> p09
 * [Vai alla mensa]
-    Lasci perdere e prendi la strada di casa.
+    Non torni indietro. Prendi la strada di casa, e cerchi di non pensarci.
+    { panino_dato:
+        Hai ancora il panno vuoto in tasca. Ti sembra piu' leggero del necessario.
+    - else:
+        Il mezzo panino e' ancora in tasca, ma non hai piu' voglia di finirlo.
+    }
     -> p09
 
+// Riunione alla mensa + seme al tavolo (il bag-tic e' RIMOSSO qui per tenerlo raro).
 === p09 ===
-{ vecchio_accompagnato:
-    Cammini accanto al vecchio. Procede piano e parla a tratti, come se misurasse il fiato. # scene: p09
-- else:
-    Quando entri in vista della mensa, lo ritrovi gia' seduto a un tavolo, piu' piccolo di quanto sembrava nel bosco. In qualche modo e' arrivato prima di te. # scene: p09
-}
-Dice di aver visto strade lunghe, citta' dove nessuno conosce il tuo nome e posti in cui una scodella calda vale piu' di una moneta.
+La mensa ha l'odore che ha sempre: zuppa, legno, il sapone che tua madre mette nei panni del tavolo. # scene: p09
+Lui e' gia' seduto.
+Non dove si siedono i passanti di solito, nell'angolo vicino alla porta, quello che non da' le spalle a niente. Le mani appoggiate al bordo del tavolo, la borsa posata accanto come un animale tranquillo. Ti guarda arrivare senza sorprendersi.
+Non capisci come ci sia arrivato prima. Non gliene chiedi.
+Ti avvicini. Non sai perche'. Un momento fa eri in mezzo al bosco a cercare le sue tracce, adesso sei qui, a due passi da lui, e la cosa piu' onesta da fare sembra sedersi. # peso: scelta
+
+* [Siediti con lui]
+    Ti siedi.
+    Non parla subito. Guarda la mensa come chi guarda un posto buono senza volerlo trattenere.
+    Poi dice, come se la cosa non richiedesse un'introduzione: "Vengo da lontano. Da Phiwen. E sto andando a Nylph, se le gambe reggono ancora qualche giorno." # voce: vecchio
+    Non te l'ha chiesto nessuno.
+    Tu non sai cos'e' Phiwen. Nylph la conosci di nome, tua madre la nomina quando qualcuno arriva da fuori. E' lontana abbastanza da essere quasi un posto immaginario.
+    -> dialogo_d1
+
+// PARTE B — percorso in cammino (vecchio_accompagnato = true).
+=== cammino ===
+Il sentiero verso Mezclar lo conosci meglio di chiunque altro. Hai la sensazione che lui no, anche se non glielo chiedi. # scene: p09
+Camminate. Il vecchio mette il piede con attenzione, prima il tallone, poi le dita, come chi non si fida del terreno. Tu rallenti senza accorgertene.
+A un certo punto lui si ferma, guarda il cielo attraverso i rami, e dice una cosa che non e' una domanda ma suona come se lo fosse:
+"Non hai paura dei boschi." # voce: vecchio
+Non e' un complimento. E' un'osservazione, come si fa con le cose che meritano di essere notate. # peso: scelta
+
+* ["No. Li conosco."]
+    Il vecchio ti guarda di lato. "La paura non dipende da quanto conosci un posto." # voce: vecchio
+    Non capisci bene cosa vuol dire. Camminate.
+    -> cammino_seme
+* ["A volte si'."]
+    ~ stat_coraggio = stat_coraggio + 1
+    "A volte si'," dici. "Ma poi passo lo stesso."
+    Il vecchio non dice niente per un momento. Poi: "Quella e' la definizione corretta di coraggio. Non l'assenza di paura." # voce: vecchio
+    -> cammino_seme
+* [Stringi le spalle]
+    Stringi le spalle. Non e' una risposta e lo sai, ma e' quello che ti viene.
+    Il vecchio annuisce, come se lo capisse.
+    -> cammino_seme
+
+=== cammino_seme ===
+Camminate un altro tratto in silenzio. # scene: p09
+Poi il vecchio dice: "Phiwen, se ti interessa saperlo. Vengo da Phiwen. E sto andando a Nylph." # voce: vecchio
+Nylph. Il nome di una citta' lontana che hai sentito citare solo quando gli adulti parlano di commercio e di strade lunghe. # peso: scelta
 
 * [Chiedi dove sta andando]
-    "Verso Nylph, se le gambe mi reggono." # voce: vecchio
     ~ seed_curiosita_vecchio = "alta"
-    -> p10
+    "E' lontana?"
+    "Abbastanza da far male ai piedi." # voce: vecchio
+    Camminate ancora. Qualcosa nell'aria e' cambiato, ma non sai nominarlo.
+    -> dialogo_d1
 * [Ascolta in silenzio]
-    Lo ascolti senza interrompere, mentre la citta' si avvicina.
+    Non chiedi altro. Camminate ancora. Qualcosa nell'aria e' cambiato, ma non sai nominarlo.
+    -> dialogo_d1
+
+// D1 / D2 — contenuto CONDIVISO (due cornici: in cammino / al tavolo).
+// L'incremento di tratto e' SOLO su D2; D1 e' caratterizzazione/legame.
+=== dialogo_d1 ===
+{ vecchio_accompagnato:
+    "Cosa fai, tu, quando non segui gli scoiattoli?" # scene: p09 # voce: vecchio
+    La domanda e' strana. Non e' una domanda da adulti. Gli adulti chiedono come ti chiami, quanti anni hai, se vai a scuola. Questa sembra quasi che si aspetti una risposta vera.
+- else:
+    Rimane qualche istante in silenzio. Poi ti guarda come si guarda una persona, non come si guarda un bambino, e chiede: # scene: p09
+    "Cosa fai, di solito, in un posto come questo?" # voce: vecchio
+}
+
+* ["Combatto i mostri."]
+    "Combatto i mostri," dici. Poi, per essere preciso: "O mi esercito. Per quando arrivano davvero."
+    Il vecchio ascolta. Non ride.
+    "Mostri," ripete, come se stesse mettendo la parola al posto giusto in una frase che sta costruendo da sola. # voce: vecchio
+    -> dialogo_d2
+* ["Guardo le cose. E penso."]
+    "Guardo le cose," dici. "Le tracce, gli animali, come si muovono. E penso a perche' fanno quello che fanno."
+    Fai una pausa. "Mia mamma dice che faccio troppe domande. Il maestro anche."
+    Il vecchio annuisce piano, come chi riceve una notizia che si aspettava.
+    "Capire il perche'," dice. Solo quello. # voce: vecchio
+    -> dialogo_d2
+* ["Aiuto mia mamma alla mensa."]
+    "Aiuto mia mamma alla mensa," dici. "Porto ciotole, sparecchio. A volte ascolto le storie di chi arriva."
+    Ti viene in mente la faccia di certi viandanti quando mangiano davvero, con entrambe le mani sulla ciotola.
+    "Le storie, soprattutto," aggiungi.
+    Il vecchio ti guarda un momento in piu' del solito.
+    "Ascolti le persone," dice. Non e' una domanda. # voce: vecchio
+    -> dialogo_d2
+
+=== dialogo_d2 ===
+{ vecchio_accompagnato:
+    Poi il vecchio alza gli occhi verso il sentiero. "E da grande?" dice. "Quando non devi piu' seguire gli scoiattoli perche' hai gia' deciso dove andare, cosa fai?" # scene: p09 # voce: vecchio
+    Non lo dice come gli adulti che chiedono cosa vuoi fare da grande e nel frattempo pensano gia' ad altro. Lo dice come chi ha ancora voglia di sentire la risposta. # peso: scelta
+- else:
+    Il rumore della mensa vi riempie lo spazio tra le parole. Il vecchio lascia che passi, come chi non ha fretta di niente. Poi posa una mano sul tavolo, piatta, ferma. # scene: p09
+    "E tu, cosa vuoi diventare?" # voce: vecchio # peso: scelta
+}
+
+* ["Voglio diventare un eroe che sconfigge i mostri."]
+    ~ stat_coraggio = stat_coraggio + 1
+    "Voglio diventare un eroe," dici. "Uno che sconfigge i mostri. Sul serio, non con la spada di legno."
+    Il vecchio { vecchio_accompagnato: cammina qualche passo in silenzio|resta in silenzio un momento }.
+    "Un eroe," dice alla fine. "Ho incontrato alcuni. Quasi nessuno pensava di esserlo mentre ci era dentro." # voce: vecchio
+    Non sembra una critica. Sembra una cosa che ha visto.
+    "Ma ci vuole qualcosa, per sconfiggere i mostri," aggiunge. "Bisogna riconoscerli." # voce: vecchio
+    -> p10
+* ["Voglio sapere tutto del mondo."]
+    ~ stat_acume = stat_acume + 1
+    "Voglio sapere tutto," dici. "Come funzionano le cose. Perche' succedono. Tutto."
+    Il vecchio sorride, non di superiorita', ma di qualcosa che assomiglia al riconoscimento.
+    "Tutto e' tanto," dice. "Ho passato anni a cercare di capire una sola cosa, e alla fine ho capito che mi mancavano le domande giuste." # voce: vecchio
+    "Cosa non sai ancora, tu, che ti piacerebbe sapere?" # voce: vecchio
+    Rispondi qualcosa, non sai bene cosa: i posti lontani, com'e' fatto il mare. Il vecchio non commenta, e abbassa lo sguardo sulla spada.
+    -> p10
+* ["Voglio aiutare le persone, come mia mamma."]
+    ~ stat_empatia = stat_empatia + 1
+    "Voglio aiutare le persone," dici. "Come fa mia mamma. Lei li vede quando entrano, se hanno freddo, se hanno camminato troppo, se stanno fingendo che vada bene. E poi gli da' quello di cui hanno bisogno."
+    Ti fermi un istante. "Non sempre e' la zuppa."
+    Il vecchio non dice niente { vecchio_accompagnato: per qualche passo|per un momento }.
+    "Tua madre sa vedere le persone," dice alla fine. "E' raro." # voce: vecchio
+    Una pausa. "Tu, le sai vedere?" # voce: vecchio
     -> p10
 
 === p10 ===
@@ -286,11 +394,12 @@ Tu conosci quel nome. Errol. Il tipo di nome che sulle bocche degli adulti diven
     -> p14
 
 === p14 ===
-La mensa e' piena dell'odore delle cose semplici: zuppa, pane, legno bagnato lavato troppe volte. Per te e' il posto di tua madre. # scene: p14
 { vecchio_accompagnato:
+    La mensa e' piena dell'odore delle cose semplici: zuppa, pane, legno bagnato lavato troppe volte. Per te e' il posto di tua madre. # scene: p14
     Il vecchio si ferma sulla soglia come chi trova finalmente una sedia.
 - else:
-    Lo ritrovi gia' seduto a un tavolo, piu' piccolo di quanto sembrava nel bosco.
+    Siete al tavolo da un po'. Intorno a voi la mensa si riempie: zuppa, pane, le voci dei viandanti che entrano. Per te e' il posto di tua madre. # scene: p14
+    Lui resta dov'e', le mani vicino al bordo, come chi aspetta senza chiedere.
 }
 { aiuto_vecchio == "A_panino_accompagna":
     Mirea ti guarda con un calore in piu', come se avesse capito qualcosa.

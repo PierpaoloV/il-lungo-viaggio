@@ -69,14 +69,23 @@ function walkB(story: InkStory, options: WalkB): string[] {
 
   if (options.accompagnato) {
     choose(story, "Accompagnalo alla mensa");
+    drain(story); // cammino: "Non hai paura dei boschi"
+    choose(story, "No. Li conosco.");
+    drain(story); // cammino_seme
+    choose(story, "Ascolta in silenzio");
   } else {
-    choose(story, "Indicagli la strada");
-    drain(story);
-    choose(story, "Indica la strada e basta");
+    choose(story, "Lascialo andare da solo");
+    drain(story); // p08: rimorso
+    choose(story, "Vai alla mensa");
+    drain(story); // p09: riunione + seme al tavolo
+    choose(story, "Siediti con lui");
   }
 
+  // D1 / D2 condivisi, poi P10
   drain(story);
-  choose(story, "Ascolta in silenzio"); // P09 -> P10
+  choose(story, "Combatto i mostri");
+  drain(story);
+  choose(story, "aiutare le persone");
 
   // --- Quotidiano B: P10 -> P21 ---
   scenes.push(...drain(story)); // P10

@@ -82,24 +82,28 @@ function walk(story: InkStory, options: WalkOptions): string[] {
   seen.push(...sceneTags(advanceToChoices(story)));
 
   if (options.accompagna) {
+    // Beat 3 -> Parte B (in cammino): "Non hai paura" + seme, poi D1/D2 condivisi.
     choose(story, "Accompagnalo alla mensa");
+    seen.push(...sceneTags(advanceToChoices(story))); // cammino: "Non hai paura dei boschi"
+    choose(story, "No. Li conosco."); // risposta neutra (nessuno stat)
+    seen.push(...sceneTags(advanceToChoices(story))); // cammino_seme (Phiwen/Nylph)
+    choose(story, "Ascolta in silenzio");
   } else {
-    choose(story, "Indicagli la strada");
-    advanceToChoices(story);
-    choose(story, "Indica la strada e basta");
-  }
-
-  // P08 (solo ramo B) e/o P09, poi convergenza alla mensa
-  seen.push(...sceneTags(advanceToChoices(story)));
-
-  if (story.currentChoices.some((candidate) => candidate.text.includes("Vai alla mensa"))) {
-    // Ramo B: rimorso, poi prosegue verso la mensa.
+    // Beat 3 -> Parte C: rimorso (p08) -> riunione mensa + seme (p09) -> D1/D2.
+    choose(story, "Lascialo andare da solo");
+    seen.push(...sceneTags(advanceToChoices(story))); // p08: rimorso
     choose(story, "Vai alla mensa");
-    seen.push(...sceneTags(advanceToChoices(story)));
+    seen.push(...sceneTags(advanceToChoices(story))); // p09: riunione + seme al tavolo
+    choose(story, "Siediti con lui");
   }
 
-  // P09: verso la mensa
-  choose(story, "Ascolta in silenzio");
+  // D1 (condiviso): cosa fai
+  seen.push(...sceneTags(advanceToChoices(story)));
+  choose(story, "Combatto i mostri");
+
+  // D2 (condiviso): cosa vuoi diventare, poi confluenza a p10
+  seen.push(...sceneTags(advanceToChoices(story)));
+  choose(story, "aiutare le persone");
   seen.push(...sceneTags(advanceToChoices(story)));
 
   return seen;
@@ -140,15 +144,16 @@ describe("Quotidiano A — story-walk dei 4 rami D9", () => {
     expect(seen).toContain("p10");
   });
 
-  it("Ramo D: niente panino + indica la strada", () => {
+  it("Ramo D: niente panino + lascialo andare (anche qui passa dal rimorso)", () => {
     const story = createPrologueStory();
     const seen = walk(story, { panino: false, accompagna: false });
 
     expect(getFlag(story, "panino_dato")).toBe(false);
     expect(getFlag(story, "vecchio_accompagnato")).toBe(false);
     expect(getFlag(story, "aiuto_vecchio")).toBe("D_no_panino_indica");
-    expect(getFlag(story, "rimorso_tornato")).toBe(false);
-    expect(seen).not.toContain("p08");
+    // Parte C: ogni ramo "non accompagna" passa ora dal rimorso (p08).
+    expect(getFlag(story, "rimorso_tornato")).toBe(true);
+    expect(seen).toContain("p08");
     expect(seen).toContain("p10");
   });
 

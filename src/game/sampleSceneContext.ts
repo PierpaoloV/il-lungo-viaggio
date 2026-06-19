@@ -368,7 +368,7 @@ const SCENES: Record<string, SceneContext> = {
     ],
     choiceCommands: [
       { commands: ["vai mensa", "accompagna vecchio", "vai sentiero"], choice: "Accompagnalo alla mensa" },
-      { commands: ["indica strada", "indica sentiero"], choice: "Indicagli la strada" }
+      { commands: ["indica strada", "indica sentiero", "lascialo"], choice: "Lascialo andare da solo" }
     ]
   },
   p08: {

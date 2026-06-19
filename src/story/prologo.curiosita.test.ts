@@ -44,7 +44,13 @@ function walkToNight(story: InkStory, curiosita: boolean): string {
   advance(story);
   choose(story, "Accompagnalo alla mensa");
   advance(story);
-  choose(story, curiosita ? "Chiedi dove sta andando" : "Ascolta in silenzio");
+  choose(story, "No. Li conosco."); // cammino: "Non hai paura dei boschi"
+  advance(story);
+  choose(story, curiosita ? "Chiedi dove sta andando" : "Ascolta in silenzio"); // cammino_seme
+  advance(story);
+  choose(story, "Combatto i mostri"); // D1
+  advance(story);
+  choose(story, "aiutare le persone"); // D2
   advance(story);
   choose(story, "Serve a combattere i mostri");
   advance(story);
@@ -88,7 +94,13 @@ function walkToErrolChoices(story: InkStory, acumeAlto: boolean): string[] {
   advance(story);
   choose(story, "Accompagnalo alla mensa");
   advance(story);
-  choose(story, "Ascolta in silenzio");
+  choose(story, "No. Li conosco."); // cammino
+  advance(story);
+  choose(story, "Ascolta in silenzio"); // cammino_seme
+  advance(story);
+  choose(story, "Combatto i mostri"); // D1
+  advance(story);
+  choose(story, "aiutare le persone"); // D2
   advance(story);
   choose(story, "Serve a combattere i mostri");
   advance(story);

@@ -118,9 +118,17 @@ describe("Quotidiano A — comandi testuali nel terminale", () => {
     expect(getFlag(story, "vecchio_accompagnato")).toBe(true);
     expect(getFlag(story, "aiuto_vecchio")).toBe("A_panino_accompagna");
 
-    // P09 -> ramo condiviso P10 (il vecchio nota la spada).
+    // Parte B (in cammino): "Non hai paura" + seme, poi D1/D2 condivisi -> P10.
+    advanceUntilButton("No. Li conosco.");
+    click("No. Li conosco.");
     advanceUntilButton("Ascolta in silenzio");
     click("Ascolta in silenzio");
+    advanceUntilButton("Combatto i mostri");
+    click("Combatto i mostri");
+    advanceUntilButton("aiutare le persone");
+    click("aiutare le persone");
+
+    // Confluenza nel ramo condiviso P10 (il vecchio nota la spada).
     advanceUntil("A cosa serve?");
     expect(root.textContent).toContain("A cosa serve?");
   });

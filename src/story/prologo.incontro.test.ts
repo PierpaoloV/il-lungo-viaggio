@@ -25,6 +25,15 @@ function advanceToChoices(story: InkStory): string[] {
   return tags;
 }
 
+/** Come advanceToChoices, ma restituisce il testo concatenato della scena. */
+function advanceText(story: InkStory): string {
+  let text = "";
+  while (story.canContinue) {
+    text += `${story.Continue()}\n`;
+  }
+  return text;
+}
+
 /** Sceglie, fra le scelte disponibili, quella il cui testo contiene `needle`. */
 function choose(story: InkStory, needle: string): void {
   const choice = story.currentChoices.find((candidate) => candidate.text.includes(needle));
@@ -59,6 +68,42 @@ function walkToPanino(story: InkStory): void {
   walkToCaduta(story);
   choose(story, "Guarda la caviglia");
   advanceToChoices(story); // P06: il panino
+}
+
+/**
+ * Beat 3 -> percorso in cammino. Arriva alla scelta "Non hai paura dei boschi".
+ * Usa il gesto "Avvicinati subito" (empatia) e tiene il panino per non sporcare
+ * coraggio/acume: cosi' gli incrementi di coraggio osservati vengono dal cammino.
+ */
+function walkToCammino(story: InkStory): void {
+  walkToCaduta(story);
+  choose(story, "Avvicinati subito");
+  advanceToChoices(story); // P06: il panino
+  choose(story, "Tienilo");
+  advanceToChoices(story); // P07: accompagnare?
+  choose(story, "Accompagnalo alla mensa");
+  advanceToChoices(story); // cammino: "Non hai paura dei boschi"
+}
+
+/**
+ * Beat 3 -> Parte C (non accompagna). Percorre rimorso (p08) + riunione mensa
+ * (p09) e si ferma alle scelte D1, con la cornice "al tavolo". Restituisce le
+ * scene viste lungo il percorso.
+ */
+function walkToMensaDialogo(story: InkStory): string[] {
+  walkToCaduta(story);
+  choose(story, "Avvicinati subito");
+  advanceToChoices(story); // P06: il panino
+  choose(story, "Tienilo");
+  advanceToChoices(story); // P07: accompagnare?
+  const seen: string[] = [];
+  choose(story, "Lascialo andare da solo");
+  seen.push(...sceneTags(advanceToChoices(story))); // p08: rimorso
+  choose(story, "Vai alla mensa");
+  seen.push(...sceneTags(advanceToChoices(story))); // p09: riunione + seme
+  choose(story, "Siediti con lui");
+  seen.push(...sceneTags(advanceToChoices(story))); // dialogo_d1
+  return seen;
 }
 
 describe("Beat 1 — la caduta (Issue #11)", () => {
@@ -143,6 +188,114 @@ describe("Beat 2 — panino e presentazione (Issue #12)", () => {
     expect(getFlag(story, "stat_empatia")).toBe(0);
     expect(story.currentChoices.map((candidate) => candidate.text)).toContain(
       "Accompagnalo alla mensa"
+    );
+  });
+});
+
+describe("Beat 3 + percorso in cammino, D1/D2 (Issue #13)", () => {
+  it("scegliere di accompagnare non incrementa nessuna stat", () => {
+    const story = createPrologueStory();
+    walkToPanino(story); // gesto "Guarda la caviglia" -> acume = 1
+    choose(story, "Tienilo");
+    advanceToChoices(story); // P07
+
+    choose(story, "Accompagnalo alla mensa");
+    advanceToChoices(story); // cammino
+
+    expect(getFlag(story, "vecchio_accompagnato")).toBe(true);
+    expect(getFlag(story, "stat_acume")).toBe(1); // invariato dal gesto
+    expect(getFlag(story, "stat_empatia")).toBe(0);
+    expect(getFlag(story, "stat_coraggio")).toBe(0);
+  });
+
+  it("«A volte si'» a 'Non hai paura dei boschi' incrementa coraggio; le altre no", () => {
+    const conCoraggio = createPrologueStory();
+    walkToCammino(conCoraggio);
+    choose(conCoraggio, "A volte si'");
+    advanceToChoices(conCoraggio);
+    expect(getFlag(conCoraggio, "stat_coraggio")).toBe(1);
+
+    const senza = createPrologueStory();
+    walkToCammino(senza);
+    choose(senza, "No. Li conosco.");
+    advanceToChoices(senza);
+    expect(getFlag(senza, "stat_coraggio")).toBe(0);
+  });
+
+  const d2Cases = [
+    { scelta: "un eroe che sconfigge i mostri", stat: "stat_coraggio" },
+    { scelta: "sapere tutto del mondo", stat: "stat_acume" },
+    { scelta: "aiutare le persone", stat: "stat_empatia" }
+  ] as const;
+
+  for (const { scelta, stat } of d2Cases) {
+    it(`in cammino fino a p10: D2 «${scelta}» incrementa ${stat}`, () => {
+      const story = createPrologueStory();
+      walkToCammino(story); // empatia=1 (Avvicinati), acume/coraggio=0
+
+      choose(story, "Stringi le spalle"); // "Non hai paura": nessuno stat
+      advanceToChoices(story); // cammino_seme
+      choose(story, "Ascolta in silenzio");
+      advanceToChoices(story); // D1
+      choose(story, "Combatto i mostri"); // D1: nessuno stat
+      advanceToChoices(story); // D2
+
+      const prima = getFlag(story, stat);
+      choose(story, scelta);
+      const seen = sceneTags(advanceToChoices(story));
+
+      expect(getFlag(story, stat)).toBe((prima as number) + 1);
+      // Confluenza nel knot p10 condiviso.
+      expect(seen).toContain("p10");
+      expect(story.currentChoices.map((candidate) => candidate.text)).toContain(
+        "Serve a combattere i mostri"
+      );
+    });
+  }
+});
+
+describe("Percorso rimorso/mensa, cornice al tavolo (Issue #14)", () => {
+  it("non accompagnare passa dal rimorso e arriva al D1 con cornice al tavolo", () => {
+    const story = createPrologueStory();
+    const seen = walkToMensaDialogo(story);
+
+    expect(getFlag(story, "vecchio_accompagnato")).toBe(false);
+    expect(getFlag(story, "rimorso_tornato")).toBe(true);
+    expect(seen).toContain("p08"); // rimorso
+    // Stesso D1 condiviso del percorso in cammino.
+    expect(story.currentChoices.map((candidate) => candidate.text)).toContain(
+      "\"Combatto i mostri.\""
+    );
+  });
+
+  it("il rimorso reagisce al panino: ramo D (senza panino) lo segnala in tasca", () => {
+    const story = createPrologueStory();
+    walkToCaduta(story);
+    choose(story, "Avvicinati subito");
+    advanceToChoices(story);
+    choose(story, "Tienilo"); // niente panino
+    advanceToChoices(story);
+    choose(story, "Lascialo andare da solo");
+    advanceText(story); // p08: rimorso (intro)
+    choose(story, "Vai alla mensa");
+    const testo = advanceText(story); // corpo della scelta + p09
+
+    expect(testo).toContain("Il mezzo panino e' ancora in tasca");
+  });
+
+  it("D1/D2 al tavolo confluiscono in p10 e D2 incrementa la stat", () => {
+    const story = createPrologueStory();
+    walkToMensaDialogo(story); // empatia=1 (Avvicinati), al D1
+
+    choose(story, "Guardo le cose"); // D1: nessuno stat
+    advanceToChoices(story); // D2 (al tavolo)
+    choose(story, "sapere tutto del mondo"); // -> acume
+    const seen = sceneTags(advanceToChoices(story));
+
+    expect(getFlag(story, "stat_acume")).toBe(1);
+    expect(seen).toContain("p10");
+    expect(story.currentChoices.map((candidate) => candidate.text)).toContain(
+      "Serve a combattere i mostri"
     );
   });
 });
