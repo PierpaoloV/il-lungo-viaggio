@@ -459,3 +459,76 @@ input {
   text-transform: uppercase;
   background: rgba(122, 78, 33, 0.18);
 }
+
+/* Recap di fine prologo: overlay a tutto schermo, una card (scelta) alla volta. */
+.recap-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  background: #07090b;
+  cursor: pointer;
+}
+
+.recap-overlay__hint {
+  position: absolute;
+  right: 0;
+  bottom: 1.4rem;
+  left: 0;
+  margin: 0;
+  font-family: var(--font-story);
+  font-size: 0.8rem;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  text-align: center;
+  color: rgba(219, 202, 169, 0.4);
+}
+
+.recap-card {
+  display: grid;
+  gap: 1.1rem;
+  justify-items: center;
+  max-width: min(52rem, 92vw);
+  margin: 0;
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+
+.recap-card--visible {
+  opacity: 1;
+}
+
+.recap-card__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 70vh;
+  object-fit: cover;
+  border: 1px solid rgba(219, 202, 169, 0.22);
+  border-radius: 6px;
+  background: #0a0d11;
+  box-shadow: 0 1rem 2.6rem rgba(0, 0, 0, 0.55);
+}
+
+.recap-card__caption {
+  max-width: 36rem;
+  font-family: var(--font-story);
+  font-size: clamp(0.95rem, 1.9vw, 1.08rem);
+  font-style: italic;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--color-story-muted);
+}
+
+.recap-card__caption[hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recap-card {
+    transition: none;
+    opacity: 1;
+  }
+}

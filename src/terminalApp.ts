@@ -21,6 +21,11 @@ import {
 } from "./parser/italianParser";
 import type { InkChoice, InkStory } from "./story/inkTypes";
 import { getFlag, loadGame, saveGame, setFlag, type StorageLike } from "./state/saveLoad";
+import {
+  buildRecapCards,
+  toRecapCardViews,
+  type RecapCardView
+} from "./recap/recapCards";
 
 const DREAM_CLIMAX_IMAGE_SRC = new URL(
   "../art/scenes/sogno-consegna-spada-v1.png",
@@ -210,7 +215,7 @@ export class TerminalApp {
     this.renderChoices();
 
     if (getFlag(this.story, "prologo_completato") === true) {
-      this.finishPrologue();
+      void this.finishPrologue();
     } else {
       this.writeLine("system", "Fine della scena d'esempio.");
     }
@@ -218,8 +223,14 @@ export class TerminalApp {
     this.input.disabled = true;
   }
 
-  /** Chiusura del prologo (P36): schermata finale + salvataggio automatico. */
-  private finishPrologue(): void {
+  /**
+   * Chiusura del prologo (P36): prima il recap delle scelte, poi la schermata
+   * finale + salvataggio automatico. Il recap e' a tutto schermo e sospende
+   * l'input: il confine d'atto e' l'unico punto in cui e' legittimo.
+   */
+  private async finishPrologue(): Promise<void> {
+    await this.playRecap(toRecapCardViews(buildRecapCards(this.story)));
+
     const banner = document.createElement("div");
     banner.className = "terminal__end";
     banner.dataset.testid = "prologue-end";
@@ -234,6 +245,111 @@ export class TerminalApp {
       // chiusura del prologo resta comunque valida.
       this.writeLine("system", "Fine del Prologo.");
     }
+  }
+
+  /**
+   * Recap di fine prologo: una sequenza di immagini, una per ogni scelta compiuta,
+   * a tutto schermo sopra il terminale. Una card alla volta in dissolvenza, ~4s
+   * l'una per stare nei 20-30s. Skippabile (click / Invio / Spazio / Esc) e
+   * silenziato da `prefers-reduced-motion`. Se non c'e' nessuna scelta da
+   * mostrare, non fa nulla.
+   */
+  private playRecap(cards: RecapCardView[]): Promise<void> {
+    if (cards.length === 0) {
+      return Promise.resolve();
+    }
+
+    const reducedMotion =
+      typeof window !== "undefined" &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const CARD_MS = reducedMotion ? 700 : 4200;
+    const FADE_MS = reducedMotion ? 0 : 700;
+    const raf =
+      typeof requestAnimationFrame === "function"
+        ? requestAnimationFrame
+        : (cb: FrameRequestCallback) => window.setTimeout(() => cb(0), 0);
+
+    return new Promise<void>((resolve) => {
+      const overlay = document.createElement("div");
+      overlay.className = "recap-overlay";
+      overlay.dataset.testid = "recap-overlay";
+
+      const figure = document.createElement("figure");
+      figure.className = "recap-card";
+      const image = document.createElement("img");
+      image.className = "recap-card__image";
+      const caption = document.createElement("figcaption");
+      caption.className = "recap-card__caption";
+      figure.append(image, caption);
+      overlay.append(figure);
+
+      const hint = document.createElement("p");
+      hint.className = "recap-overlay__hint";
+      hint.textContent = "Premi un tasto per continuare";
+      overlay.append(hint);
+
+      this.root.append(overlay);
+      this.input.disabled = true;
+
+      // Scalda la cache del browser cosi' le tavole non lampeggiano al cambio card.
+      for (const view of cards) {
+        const preload = new Image();
+        preload.src = view.src;
+      }
+
+      let index = 0;
+      let timer = 0;
+      let done = false;
+
+      const finish = () => {
+        if (done) {
+          return;
+        }
+        done = true;
+        window.clearTimeout(timer);
+        document.removeEventListener("keydown", onKey);
+        overlay.remove();
+        resolve();
+      };
+
+      const onKey = (event: KeyboardEvent) => {
+        if (event.key === "Enter" || event.key === " " || event.key === "Escape") {
+          event.preventDefault();
+          finish();
+        }
+      };
+
+      overlay.addEventListener("click", finish);
+      document.addEventListener("keydown", onKey);
+
+      const showNext = () => {
+        if (done) {
+          return;
+        }
+        if (index >= cards.length) {
+          timer = window.setTimeout(finish, reducedMotion ? 0 : 1200);
+          return;
+        }
+
+        const view = cards[index];
+        index += 1;
+
+        figure.classList.remove("recap-card--visible");
+        figure.dataset.cardId = view.id;
+        image.src = view.src;
+        image.alt = view.alt;
+        caption.textContent = view.caption ?? "";
+        caption.hidden = view.caption === undefined;
+
+        // Doppio rAF: il browser registra opacity:0 prima di far scattare il fade.
+        raf(() => raf(() => figure.classList.add("recap-card--visible")));
+
+        timer = window.setTimeout(showNext, CARD_MS + FADE_MS);
+      };
+
+      showNext();
+    });
   }
 
   private renderChoices(): void {

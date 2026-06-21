@@ -110,7 +110,7 @@ function mountApp(story: InkStory, storage: StorageLike) {
 }
 
 describe("Chiusura del prologo nel terminale (P34-P36)", () => {
-  it("dal sogno al risveglio: rimuove dream-mode, mostra 'Fine del Prologo' e salva", () => {
+  it("dal sogno al risveglio: rimuove dream-mode, mostra 'Fine del Prologo' e salva", async () => {
     const storage = createMemoryStorage();
     const story = createPrologueStory();
     const app = mountApp(story, storage);
@@ -141,10 +141,24 @@ describe("Chiusura del prologo nel terminale (P34-P36)", () => {
     expect(app.root.textContent).toContain("braccio sinistro");
     app.clickWhenAvailable("Guardalo meglio");
 
-    // P36: la chiamata di Mirea chiude il prologo.
+    // P36: la chiamata di Mirea chiude il prologo. Prima del banner si interpone
+    // il recap delle scelte, a tutto schermo: lo saltiamo con un click.
     app.clickWhenAvailable("Rispondi a Mirea");
-    app.advanceUntilText("Fine del Prologo");
 
+    let recap: HTMLElement | null = null;
+    for (let index = 0; index < 40; index += 1) {
+      recap = app.root.querySelector<HTMLElement>("[data-testid='recap-overlay']");
+      if (recap) {
+        break;
+      }
+      app.send("aspetta");
+    }
+    expect(recap).not.toBeNull();
+
+    recap!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(app.root.querySelector("[data-testid='recap-overlay']")).toBeNull();
     expect(app.prologueEnd()).not.toBeNull();
     expect(app.prologueEnd()!.textContent).toBe("Fine del Prologo");
     expect(getFlag(story, "segno_notato")).toBe(true);
