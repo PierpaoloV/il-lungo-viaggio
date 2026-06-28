@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "com.inkle.ink-unity-integration": {
+      "version": "file:com.inkle.ink-unity-integration",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.unity.multiplayer.center": {
       "version": "1.0.1",
       "depth": 0,
