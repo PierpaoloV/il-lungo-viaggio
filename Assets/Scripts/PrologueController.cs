@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -16,7 +17,14 @@ namespace IlLungoViaggio
         TerminalView _terminal;
         MusicManager _music;
         InkDriver _driver;
+        Coroutine _advanceRoutine;
         bool _ended;
+
+        [SerializeField, Range(20f, 120f)]
+        float charactersPerSecond = 42f;
+
+        [SerializeField, Range(0.1f, 1f)]
+        float lineRevealDelay = 0.35f;
 
         public void Init(TerminalView terminal, MusicManager music)
         {
@@ -29,6 +37,7 @@ namespace IlLungoViaggio
 
             _terminal.OnChoice += OnChoice;
             _terminal.OnCommand += OnCommand;
+            _terminal.SetInputActive(false);
 
             if (GameFlow.Resume && SaveSystem.HasSave()
                 && SaveSystem.TryLoad(out var inkState, out _))
@@ -43,15 +52,42 @@ namespace IlLungoViaggio
 
         void Advance()
         {
+            if (_advanceRoutine == null)
+                _advanceRoutine = StartCoroutine(RevealUntilChoice());
+        }
+
+        IEnumerator RevealUntilChoice()
+        {
+            bool hasPrintedLine = false;
             while (_driver.CanContinue)
             {
                 string line = _driver.Continue();
-                ApplyTags(_driver.CurrentTags);
-                line = (line ?? "").Trim();
-                if (line.Length > 0) _terminal.Print(line);
+                string speaker = ApplyTags(_driver.CurrentTags);
+                if (string.IsNullOrWhiteSpace(line)) continue;
+
+                string[] lines = line.Replace("\r\n", "\n")
+                    .Replace('\r', '\n')
+                    .Split('\n');
+                foreach (string rawLine in lines)
+                {
+                    string visibleLine = rawLine.Trim();
+                    if (visibleLine.Length == 0) continue;
+
+                    if (hasPrintedLine)
+                        yield return new WaitForSecondsRealtime(lineRevealDelay);
+
+                    yield return _terminal.PrintAnimated(
+                        visibleLine, charactersPerSecond, speaker);
+                    hasPrintedLine = true;
+                }
             }
 
-            if (_driver.HasChoices) ShowChoices();
+            _advanceRoutine = null;
+            if (_driver.HasChoices)
+            {
+                ShowChoices();
+                _terminal.SetInputActive(true);
+            }
             else EndPrologue();
         }
 
@@ -70,6 +106,7 @@ namespace IlLungoViaggio
             var choices = _driver.CurrentChoices;
             if (index < 0 || index >= choices.Count) return;
 
+            _terminal.SetInputActive(false);
             _terminal.PrintSystem("> " + choices[index].text);
             _terminal.ClearChoices();
             _driver.Choose(index);
@@ -125,9 +162,10 @@ namespace IlLungoViaggio
 
         // ---- Tag (dream mode) --------------------------------------------
 
-        void ApplyTags(List<string> tags)
+        string ApplyTags(List<string> tags)
         {
-            if (tags == null) return;
+            string speaker = null;
+            if (tags == null) return speaker;
             foreach (var t in tags)
             {
                 int colon = t.IndexOf(':');
@@ -140,7 +178,9 @@ namespace IlLungoViaggio
                     _terminal.SetDreamMode(dream);
                     if (_music != null) _music.SetDreamMood(dream);
                 }
+                else if (key == "voce") speaker = val;
             }
+            return speaker;
         }
 
         // ---- Fine prologo + handoff --------------------------------------
@@ -149,6 +189,7 @@ namespace IlLungoViaggio
         {
             _ended = true;
             _terminal.ClearChoices();
+            _terminal.SetInputActive(false);
             SaveSystem.Save(_driver.SaveState(), new GameState());
 
             _terminal.PrintSystem("");

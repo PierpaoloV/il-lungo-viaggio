@@ -97,11 +97,11 @@ Il vecchio ti sente, alza gli occhi. La sua faccia e' quella di qualcuno che ha 
     ~ stat_empatia = stat_empatia + 1
     Ti metti in ginocchio accanto alla gamba tesa senza pensarci. Il vecchio ti guarda come se il gesto lo avesse sorpreso, ma non arretra.
     "Sai cosa stai guardando?" chiede. # voce: vecchio
-    "No," dici. "Ma stai qua."
+    "No," dici. "Ma stai qua." # voce: ernesto
     -> p05_gather
 * [Chiedi se sta bene]
     ~ stat_acume = stat_acume + 1
-    "Stai bene?" La domanda e' piccola, un po' inutile data la posizione, e lo sai anche tu mentre la dici.
+    "Stai bene?" La domanda e' piccola, un po' inutile data la posizione, e lo sai anche tu mentre la dici. # voce: ernesto
     Il vecchio ti guarda. "Abbastanza. La caviglia regge. Il problema e' rimettersi in piedi." # voce: vecchio
     Ti inginocchi accanto a lui.
     -> p05_gather
@@ -128,7 +128,7 @@ Nella tua tasca c'e' il mezzo panino nel panno. Lo senti attraverso il tessuto. 
     Allunghi il panno senza spiegare niente. Non sei sicuro di cosa ti abbia mosso: forse il fatto che lui non lo ha chiesto.
     Il vecchio guarda la tua mano. Poi il panino. Poi te.
     "Non ho niente da darti in cambio," dice. # voce: vecchio
-    "Non ti ho chiesto niente," dici tu.
+    "Non ti ho chiesto niente," dici tu. # voce: ernesto
     Accetta. Mangia piano, come chi non spreca niente.
     -> p06b
 * [Tienilo]
@@ -138,12 +138,12 @@ Nella tua tasca c'e' il mezzo panino nel panno. Lo senti attraverso il tessuto. 
 
 === p06b ===
 "Come ti chiami?" chiede il vecchio. # scene: p06 # voce: vecchio
-"Ernesto."
+"Ernesto." # voce: ernesto
 Annuisce, lento. "Lesmidoom. Ma i vecchi si confondono con i nomi: chiamami come vuoi." # voce: vecchio
 Lesmidoom. Il nome e' troppo grande per questo bosco. Non sai dove metterlo.
 Lui abbassa lo sguardo sulla spada di legno alla tua cintura. Non ride.
 "Di dove sei?" # voce: vecchio
-"Di Mezclar. Il paese qui vicino."
+"Di Mezclar. Il paese qui vicino." # voce: ernesto
 "Lo so dov'e'. Ci vengo." Una pausa. "O ci provo." # voce: vecchio
 -> p07
 
@@ -231,7 +231,7 @@ Non e' un complimento. E' un'osservazione, come si fa con le cose che meritano d
     -> cammino_seme
 * ["A volte si'."]
     ~ stat_coraggio = stat_coraggio + 1
-    "A volte si'," dici. "Ma poi passo lo stesso."
+    "A volte si'," dici. "Ma poi passo lo stesso." # voce: ernesto
     Il vecchio non dice niente per un momento. Poi: "Quella e' la definizione corretta di coraggio. Non l'assenza di paura." # voce: vecchio
     -> cammino_seme
 * [Stringi le spalle]
@@ -246,7 +246,7 @@ Nylph. Il nome di una citta' lontana che hai sentito citare solo quando gli adul
 
 * [Chiedi dove sta andando]
     ~ seed_curiosita_vecchio = "alta"
-    "E' lontana?"
+    "E' lontana?" # voce: ernesto
     "Abbastanza da far male ai piedi." # voce: vecchio
     Camminate ancora. Qualcosa nell'aria e' cambiato, ma non sai nominarlo.
     -> dialogo_d1
@@ -266,20 +266,20 @@ Nylph. Il nome di una citta' lontana che hai sentito citare solo quando gli adul
 }
 
 * ["Combatto i mostri."]
-    "Combatto i mostri," dici. Poi, per essere preciso: "O mi esercito. Per quando arrivano davvero."
+    "Combatto i mostri," dici. Poi, per essere preciso: "O mi esercito. Per quando arrivano davvero." # voce: ernesto
     Il vecchio ascolta. Non ride.
     "Mostri," ripete, come se stesse mettendo la parola al posto giusto in una frase che sta costruendo da sola. # voce: vecchio
     -> dialogo_d2
 * ["Guardo le cose. E penso."]
-    "Guardo le cose," dici. "Le tracce, gli animali, come si muovono. E penso a perche' fanno quello che fanno."
-    Fai una pausa. "Mia mamma dice che faccio troppe domande. Il maestro anche."
+    "Guardo le cose," dici. "Le tracce, gli animali, come si muovono. E penso a perche' fanno quello che fanno." # voce: ernesto
+    Fai una pausa. "Mia mamma dice che faccio troppe domande. Il maestro anche." # voce: ernesto
     Il vecchio annuisce piano, come chi riceve una notizia che si aspettava.
     "Capire il perche'," dice. Solo quello. # voce: vecchio
     -> dialogo_d2
 * ["Aiuto mia mamma alla mensa."]
-    "Aiuto mia mamma alla mensa," dici. "Porto ciotole, sparecchio. A volte ascolto le storie di chi arriva."
+    "Aiuto mia mamma alla mensa," dici. "Porto ciotole, sparecchio. A volte ascolto le storie di chi arriva." # voce: ernesto
     Ti viene in mente la faccia di certi viandanti quando mangiano davvero, con entrambe le mani sulla ciotola.
-    "Le storie, soprattutto," aggiungi.
+    "Le storie, soprattutto," aggiungi. # voce: ernesto
     Il vecchio ti guarda un momento in piu' del solito.
     "Ascolti le persone," dice. Non e' una domanda. # voce: vecchio
     -> dialogo_d2
@@ -295,7 +295,7 @@ Nylph. Il nome di una citta' lontana che hai sentito citare solo quando gli adul
 
 * ["Voglio diventare un eroe che sconfigge i mostri."]
     ~ stat_coraggio = stat_coraggio + 1
-    "Voglio diventare un eroe," dici. "Uno che sconfigge i mostri. Sul serio, non con la spada di legno."
+    "Voglio diventare un eroe," dici. "Uno che sconfigge i mostri. Sul serio, non con la spada di legno." # voce: ernesto
     Il vecchio { vecchio_accompagnato: cammina qualche passo in silenzio|resta in silenzio un momento }.
     "Un eroe," dice alla fine. "Ho incontrato alcuni. Quasi nessuno pensava di esserlo mentre ci era dentro." # voce: vecchio
     Non sembra una critica. Sembra una cosa che ha visto.
@@ -303,7 +303,7 @@ Nylph. Il nome di una citta' lontana che hai sentito citare solo quando gli adul
     -> p10
 * ["Voglio sapere tutto del mondo."]
     ~ stat_acume = stat_acume + 1
-    "Voglio sapere tutto," dici. "Come funzionano le cose. Perche' succedono. Tutto."
+    "Voglio sapere tutto," dici. "Come funzionano le cose. Perche' succedono. Tutto." # voce: ernesto
     Il vecchio sorride, non di superiorita', ma di qualcosa che assomiglia al riconoscimento.
     "Tutto e' tanto," dice. "Ho passato anni a cercare di capire una sola cosa, e alla fine ho capito che mi mancavano le domande giuste." # voce: vecchio
     "Cosa non sai ancora, tu, che ti piacerebbe sapere?" # voce: vecchio
@@ -311,8 +311,8 @@ Nylph. Il nome di una citta' lontana che hai sentito citare solo quando gli adul
     -> p10
 * ["Voglio aiutare le persone, come mia mamma."]
     ~ stat_empatia = stat_empatia + 1
-    "Voglio aiutare le persone," dici. "Come fa mia mamma. Lei li vede quando entrano, se hanno freddo, se hanno camminato troppo, se stanno fingendo che vada bene. E poi gli da' quello di cui hanno bisogno."
-    Ti fermi un istante. "Non sempre e' la zuppa."
+    "Voglio aiutare le persone," dici. "Come fa mia mamma. Lei li vede quando entrano, se hanno freddo, se hanno camminato troppo, se stanno fingendo che vada bene. E poi gli da' quello di cui hanno bisogno." # voce: ernesto
+    Ti fermi un istante. "Non sempre e' la zuppa." # voce: ernesto
     Il vecchio non dice niente { vecchio_accompagnato: per qualche passo|per un momento }.
     "Tua madre sa vedere le persone," dice alla fine. "E' raro." # voce: vecchio
     Una pausa. "Tu, le sai vedere?" # voce: vecchio
@@ -331,7 +331,7 @@ La domanda sembra facile. Le spade servono a quello. Lo sanno tutti.
     -> p11
 
 === p11 ===
-"Serve a combattere i mostri," dici. # scene: p11
+"Serve a combattere i mostri," dici. # scene: p11 # voce: ernesto
 Lo dici con la sicurezza delle cose che non hanno ancora avuto bisogno di spiegazioni. Gli eroi combattono i mostri. Gli umani stanno dalla parte degli eroi. E se hai una spada, anche di legno, almeno puoi provarci.
 -> p12
 
@@ -342,15 +342,15 @@ La domanda ti resta addosso per un istante. Fame la capisci. Mostro anche. Le du
 
 * [Lo uccido. E' un mostro.]
     ~ seed_mostro_affamato = "netto"
-    "Vuole mangiare me," dici.
+    "Vuole mangiare me," dici. # voce: ernesto
     -> p13
 * [Se viene verso di me, lo uccido.]
     ~ seed_mostro_affamato = "difensivo"
-    "Se mi viene vicino, mi difendo," dici.
+    "Se mi viene vicino, mi difendo," dici. # voce: ernesto
     -> p13
 * [Prima gli grido di andare via. Poi lo uccido.]
     ~ seed_mostro_affamato = "esitante"
-    "Prima gli grido di andare via," dici. "Poi, se non se ne va..."
+    "Prima gli grido di andare via," dici. "Poi, se non se ne va..." # voce: ernesto
     -> p13
 
 === p13 ===
@@ -367,7 +367,7 @@ Tu conosci quel nome. Errol. Il tipo di nome che sulle bocche degli adulti diven
     Il vecchio si ferma un momento. Non per trovare le parole — le parole le ha gia'. Per scegliere quali dare.
     "Perche' alcune vittorie costano piu' della sconfitta che evitano." # voce: lesmidoom
     Tu aspetti un secondo. La frase e' bella ma non la capisci del tutto, e quella parte che non capisci ti preme come un nodo.
-    "Ma in che senso? Cosa pesava?"
+    "Ma in che senso? Cosa pesava?" # voce: ernesto
     Il vecchio non risponde. Porta la mano alla borsa, la sistema con due dita — quella cura veloce di chi controlla qualcosa senza volerlo mostrare — e nel farlo allunga il passo di mezzo punto, tanto che quasi non lo noti. Ma lo noti.
     Camminate avanti. L'argomento non c'e' piu', o almeno non e' piu' suo. Tu hai ancora la domanda in bocca, ma non sai piu' bene dove metterla.
     -> p14
@@ -470,7 +470,7 @@ Poi, davanti a tua madre, aggiunge: "Fai buon viaggio." # voce: lesmidoom
 Tu pensi che sia un modo elegante per salutare. Tua madre no. O almeno: le sue mani no.
 
 * [Rispondi "anche tu"]
-    "Anche tu," dici, senza pensarci.
+    "Anche tu," dici, senza pensarci. # voce: ernesto
     -> p20
 * [Resta zitto]
     Non dici niente. La frase resta sospesa nell'aria.
@@ -521,18 +521,18 @@ A est, un fabbro affila lame circondato da soldati. A nord, la battaglia divora 
 + [Parla col fabbro e i soldati]
     ~ sogno_bivio = "coordinato"
     ~ sogno_perdite = "ridotte"
-    Ti volti verso il fabbro. Un soldato, vedendoti muovere, mormora: "Errol ha bisogno di noi."
+    Ti volti verso il fabbro. Un soldato, vedendoti muovere, mormora: "Errol ha bisogno di noi." # voce: soldato
     -> p24
 + [Corri subito a nord]
     ~ sogno_bivio = "solo"
     ~ sogno_perdite = "alte"
-    Non aspetti nessuno. La stessa voce ti raggiunge piu' tardi e peggio, gia' coperta dal fragore: "Errol... ha bisogno..."
+    Non aspetti nessuno. La stessa voce ti raggiunge piu' tardi e peggio, gia' coperta dal fragore: "Errol... ha bisogno..." # voce: soldato
     -> p25
 
 === p24 ===
-Il fabbro ti vede muovere. "Finalmente ti sei ripreso. Errol ha bisogno della sua Spada. Se vai, non vai da solo." # scene: p24
+Il fabbro ti vede muovere. "Finalmente ti sei ripreso. Errol ha bisogno della sua Spada. Se vai, non vai da solo." # scene: p24 # voce: fabbro
 I soldati si stringono intorno a te. Non sembrano salvi. Sembrano pronti.
-Quando tre nemici sbarrano la strada, due uomini della scorta avanzano prima che tu possa decidere. "Qui ci pensiamo noi. Tu trova la Spada."
+Quando tre nemici sbarrano la strada, due uomini della scorta avanzano prima che tu possa decidere. "Qui ci pensiamo noi. Tu trova la Spada." # voce: soldato
 ~ sogno_primo_scontro = "saltato"
 
 + [Lascia che la scorta apra il passaggio]
@@ -556,7 +556,7 @@ Il campo e' pieno di corpi, ferro e fango. Il rumore non sta intorno a te: ti at
 { sogno_bivio == "solo":
     Alle tue spalle, i compagni che ti hanno coperto non si rialzano. Non guardarli troppo a lungo.
 }
-Un soldato indica una zona piu' sgombra a est. "Errol e' passato di li'. Dove lui avanza, i nemici cadono." Devi trovare una traccia, qualcosa che appartenga a Errol.
+Un soldato indica una zona piu' sgombra a est. "Errol e' passato di li'. Dove lui avanza, i nemici cadono." Devi trovare una traccia, qualcosa che appartenga a Errol. # voce: soldato
 
 + [Esamina il terreno]
     Sangue, impronte, segni di trascinamento. L'occhio ci si abitua: una pista e' una pista.
@@ -570,7 +570,7 @@ A pochi passi da te, quasi sepolto nel fango, c'e' un medaglione. Oro sporco, ar
 
 + [Raccogli il medaglione]
     ~ medaglione_errol_preso = true
-    Quando lo raccogli, leggi un nome: Errol. Un soldato trattiene il fiato. "E' suo. Guarda li': le tracce."
+    Quando lo raccogli, leggi un nome: Errol. Un soldato trattiene il fiato. "E' suo. Guarda li': le tracce." # voce: soldato
     -> p27_tracce
 
 === p27_tracce ===
@@ -680,7 +680,7 @@ Lo tocchi con un dito. Non fa male. Questo lo rende peggiore.
 
 === p36 ===
 "Ernesto?" # scene: p36 # voce: mirea
-La voce di tua madre arriva da fuori stanza, normale e vicina. "Sei sveglio?"
+La voce di tua madre arriva da fuori stanza, normale e vicina. "Sei sveglio?" # voce: mirea
 Per un momento resti tra la voce di Mirea e il segno sul braccio, tra la stanza piccola e il campo enorme che hai appena sognato.
 
 - (richiamo)
