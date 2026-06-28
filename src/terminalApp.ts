@@ -26,6 +26,7 @@ import {
   toRecapCardViews,
   type RecapCardView
 } from "./recap/recapCards";
+import type { MusicController } from "./audio/backgroundMusic";
 
 const DREAM_CLIMAX_IMAGE_SRC = new URL(
   "../art/scenes/sogno-consegna-spada-v1.png",
@@ -46,6 +47,7 @@ const REQUIRED_ACTION_NUDGE = "Aspetti, ma non succede niente finche' non scegli
 type TerminalElements = {
   root: HTMLElement;
   storage?: StorageLike;
+  music?: MusicController;
 };
 
 type StoryPresentation = {
@@ -73,7 +75,9 @@ export class TerminalApp {
   private readonly choices: HTMLDivElement;
   private readonly saveButton: HTMLButtonElement;
   private readonly resumeButton: HTMLButtonElement;
+  private readonly musicButton?: HTMLButtonElement;
   private readonly storage?: StorageLike;
+  private readonly music?: MusicController;
   private sceneId: SceneId = "p00";
   private activeCombat?: CombatState;
   // Vero quando le scelte correnti sono un bivio "che pesa" (tag ink `# peso: scelta`),
@@ -86,6 +90,7 @@ export class TerminalApp {
   constructor(story: InkStory, elements: TerminalElements) {
     this.story = story;
     this.storage = elements.storage;
+    this.music = elements.music;
     this.root = elements.root;
     this.root.className = "game-shell";
     this.root.innerHTML = `
@@ -94,6 +99,15 @@ export class TerminalApp {
           <span class="terminal__status" aria-hidden="true"></span>
           <h1>Il Lungo Viaggio</h1>
           <div class="terminal__controls">
+            ${
+              this.music
+                ? `<button
+                    type="button"
+                    class="terminal__control terminal__control--music"
+                    data-testid="music-button"
+                  ><span aria-hidden="true">♪</span></button>`
+                : ""
+            }
             <button type="button" class="terminal__control" data-testid="save-button">Salva</button>
             <button type="button" class="terminal__control" data-testid="resume-button">Riprendi</button>
           </div>
@@ -121,6 +135,7 @@ export class TerminalApp {
     this.choices = this.root.querySelector("[data-testid='choices']")!;
     this.saveButton = this.root.querySelector("[data-testid='save-button']")!;
     this.resumeButton = this.root.querySelector("[data-testid='resume-button']")!;
+    this.musicButton = this.root.querySelector("[data-testid='music-button']") ?? undefined;
 
     this.saveButton.addEventListener("click", () => {
       this.save();
@@ -130,6 +145,12 @@ export class TerminalApp {
       this.resume();
       this.input.focus();
     });
+    this.musicButton?.addEventListener("click", () => {
+      this.music?.toggle();
+      this.updateMusicButton();
+      this.input.focus();
+    });
+    this.updateMusicButton();
 
     this.form.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -137,6 +158,18 @@ export class TerminalApp {
       this.input.value = "";
       this.handleCommand(command);
     });
+  }
+
+  private updateMusicButton(): void {
+    if (!this.musicButton || !this.music) {
+      return;
+    }
+
+    const enabled = this.music.enabled;
+    const label = enabled ? "Disattiva la musica" : "Attiva la musica";
+    this.musicButton.setAttribute("aria-label", label);
+    this.musicButton.setAttribute("aria-pressed", String(enabled));
+    this.musicButton.title = label;
   }
 
   start(): void {

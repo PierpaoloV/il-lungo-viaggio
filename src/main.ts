@@ -1,10 +1,14 @@
 import "./styles.css";
 
+import { BackgroundMusic } from "./audio/backgroundMusic";
 import { hasSavedGame } from "./state/saveLoad";
 import { createPrologueStory } from "./story/createStory";
 import { TerminalApp } from "./terminalApp";
 
 const titleBackground = new URL("../art/title-bg.png", import.meta.url).href;
+const themeMusic = new BackgroundMusic(
+  `${import.meta.env.BASE_URL}audio/il-lungo-viaggio-theme.mp3`
+);
 
 const root = document.querySelector<HTMLElement>("#app");
 
@@ -14,11 +18,13 @@ if (!root) {
 
 showTitleScreen(root, {
   onNewGame: () => {
-    const app = new TerminalApp(createPrologueStory(), { root });
+    themeMusic.start();
+    const app = new TerminalApp(createPrologueStory(), { root, music: themeMusic });
     app.start();
   },
   onResume: () => {
-    const app = new TerminalApp(createPrologueStory(), { root });
+    themeMusic.start();
+    const app = new TerminalApp(createPrologueStory(), { root, music: themeMusic });
     app.startResumed();
   }
 });
