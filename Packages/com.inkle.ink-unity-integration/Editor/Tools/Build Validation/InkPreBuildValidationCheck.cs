@@ -28,9 +28,14 @@ IPreprocessBuild
     #endif
 
     static void PreprocessValidationStep () {
-        // If we're compiling, we've throw an error to cancel the build. Exit out immediately.
+        // (Il Lungo Viaggio) L'ink è compilato esternamente con
+        // tools/compile-ink.mjs e caricato da Resources: la validazione di build
+        // dell'integrazione non serve e generava un falso "Ink is compiling".
+        return;
+#pragma warning disable CS0162
         if(!AssertNotCompiling()) return;
         EnsureInkIsCompiled();
+#pragma warning restore CS0162
     }
     
     // Prevent building if ink is currently compiling. 

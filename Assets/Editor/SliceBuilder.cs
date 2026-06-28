@@ -18,9 +18,14 @@ namespace IlLungoViaggio.EditorTools
             for (int i = 0; i < args.Length - 1; i++)
                 if (args[i] == "-buildOut") outPath = args[i + 1];
 
+            var scenes = new System.Collections.Generic.List<string>();
+            foreach (var s in EditorBuildSettings.scenes)
+                if (s.enabled) scenes.Add(s.path);
+            if (scenes.Count == 0) scenes.Add("Assets/Scenes/Act1Slice.unity");
+
             var opts = new BuildPlayerOptions
             {
-                scenes = new[] { "Assets/Scenes/Act1Slice.unity" },
+                scenes = scenes.ToArray(),
                 locationPathName = outPath,
                 target = BuildTarget.StandaloneOSX,
                 options = BuildOptions.None
