@@ -95,6 +95,12 @@ namespace IlLungoViaggio
             ctrl.movementBounds = new Bounds(
                 new Vector3((minX + maxX) * 0.5f, (minY + maxY) * 0.5f, 0f),
                 new Vector3(maxX - minX, maxY - minY, 1f));
+
+            // Letto e spada fanno parte dell'illustrazione di sfondo: gli
+            // hotspot e la relativa UI vengono quindi costruiti a runtime
+            // usando le dimensioni dello sprite come riferimento.
+            var interactions = gameObject.AddComponent<RoomInteractionController>();
+            interactions.Initialize(room, ctrl);
         }
 
         // ---- Placeholder -------------------------------------------------
